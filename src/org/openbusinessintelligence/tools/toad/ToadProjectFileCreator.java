@@ -3,6 +3,8 @@ package org.openbusinessintelligence.tools.toad;
 import java.io.*;
 
 import org.openbusinessintelligence.tools.file.*;
+import org.openbusinessintelligence.tools.script.WrapperScriptCreator;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -11,7 +13,7 @@ import org.openbusinessintelligence.tools.file.*;
  */
 public class ToadProjectFileCreator {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ToadProjectFileCreator.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(ToadProjectFileCreator.class);
 
 	private static String projectTree;
 	private static String startTabs = "";

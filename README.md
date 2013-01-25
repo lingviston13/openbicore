@@ -1,0 +1,1 @@
+The Open BI Tools is a suite of tools to help every day work in business intelligence and data warehousing projects.

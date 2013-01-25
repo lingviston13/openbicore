@@ -2,14 +2,17 @@ package org.openbusinessintelligence.tools.cmd;
 
 import java.io.*;
 
+import org.openbusinessintelligence.tools.Main;
+import org.slf4j.*;
+
 /**
  * This class contains methods to execute os/command line instructions.
  * It allows also to build the complete instruction passing flags and/or arguments
  * @author marangon
  */
 public class ExecuteBean {
-
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ExecuteBean.class.getPackage().getName());
+	
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(ExecuteBean.class);
 
 	private String commandName = "";
 	private String[] commandFlags = null;
@@ -70,7 +73,7 @@ public class ExecuteBean {
 			}
 		}
 		catch(NullPointerException e) {
-			System.out.println("No flags defined");
+			System.out.println("No flags dedebugd");
 		}
 		try {
 			for (int i = 0; i < commandArgumentValues.length; i++) {
@@ -83,7 +86,7 @@ public class ExecuteBean {
 			}
 		}
 		catch(NullPointerException e) {
-			System.out.println("No arguments defined");
+			System.out.println("No arguments dedebugd");
 		}
 
 		System.out.println(commandLine);

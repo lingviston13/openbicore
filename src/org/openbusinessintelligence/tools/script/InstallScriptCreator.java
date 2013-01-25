@@ -3,10 +3,12 @@ package org.openbusinessintelligence.tools.script;
 import java.io.*;
 
 import org.openbusinessintelligence.tools.file.*;
+import org.openbusinessintelligence.tools.mail.MailBean;
+import org.slf4j.LoggerFactory;
 
 public class InstallScriptCreator {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(InstallScriptCreator.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(InstallScriptCreator.class);
 
 	private static FileInputBean installFile = new FileInputBean();
 	private static FileOutputBean scriptFile = new FileOutputBean();

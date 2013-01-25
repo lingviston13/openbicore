@@ -3,9 +3,11 @@ package org.openbusinessintelligence.tools.db;
 import java.util.*;
 import java.util.zip.*;
 
+import org.slf4j.LoggerFactory;
+
 public class ImportCsvSeriesBean {
 	
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ImportCsvSeriesBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(ImportCsvSeriesBean.class);
 
     // Declarations of bean properties
 	// Source properties
@@ -122,7 +124,7 @@ public class ImportCsvSeriesBean {
     	
     	if (!(sourceZipFile == null || sourceZipFile.equals("")) ) {
     		
-        	LOGGER.info("LOADING ENTRIES IN ZIP FILE " + sourceZipFile);
+        	logger.info("LOADING ENTRIES IN ZIP FILE " + sourceZipFile);
     		tableCopy.setSourceConnectionURL("jdbc:relique:csv:zip:" + sourceZipFile);
     		
     		// Loop on zip entries
@@ -134,7 +136,7 @@ public class ImportCsvSeriesBean {
     			ZipEntry entry = (ZipEntry)entries.nextElement();
     			if(!entry.isDirectory()) {
     				
-    				LOGGER.info("IMPORTING ENTRY " + entry.getName());
+    				logger.info("IMPORTING ENTRY " + entry.getName());
     				
             		tableCopy.setSourceQuery("SELECT * FROM " + entry.getName() + " WHERE " + sourceWhereClause);
             		
@@ -153,11 +155,11 @@ public class ImportCsvSeriesBean {
         			tableCopy.executeSelect();
         			tableCopy.executeInsert();
         			i += 1;
-    				LOGGER.info("ENTRY " + entry.getName() + " IMPORTED");
+    				logger.info("ENTRY " + entry.getName() + " IMPORTED");
     			}
     		}
     		
-        	LOGGER.info("ZIP FILE " + sourceZipFile + " COMPLETED");
+        	logger.info("ZIP FILE " + sourceZipFile + " COMPLETED");
     	}
 	}
     

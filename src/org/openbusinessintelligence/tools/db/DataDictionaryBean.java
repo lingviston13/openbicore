@@ -8,6 +8,8 @@ import javax.naming.*;
 import javax.sql.*;
 import javax.xml.parsers.*;
 
+import org.openbusinessintelligence.tools.cmd.ExecuteBean;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
 /**
@@ -16,7 +18,7 @@ import org.w3c.dom.*;
  */
 public class DataDictionaryBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(DataDictionaryBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataDictionaryBean.class);
 
     // Declarations of bean properties
 	// Source properties
@@ -171,35 +173,35 @@ public class DataDictionaryBean {
    	
     	DataSource ds = null;
     	
-    	LOGGER.info("Opening source connection...");
+    	logger.info("Opening source connection...");
     	
         if (sourceName == null ||sourceName.equals("")) {
         	Class.forName(sourceDatabaseDriver).newInstance();
-        	LOGGER.info("Loaded database driver " + sourceDatabaseDriver);
-        	LOGGER.info("URL: " + sourceConnectionURL);
+        	logger.info("Loaded database driver " + sourceDatabaseDriver);
+        	logger.info("URL: " + sourceConnectionURL);
         	if (sourcePropertyFile == null || sourcePropertyFile.equals("")) {
             	
-            	LOGGER.info("Using username & password");
+            	logger.info("Using username & password");
             	sourceCon = DriverManager.getConnection(sourceConnectionURL, sourceUserName, sourcePassWord);
         	}
         	else {
             	
-            	LOGGER.info("Using property file " + sourcePropertyFile);
+            	logger.info("Using property file " + sourcePropertyFile);
             	sourceProperties = new Properties();
         		sourceProperties.load(new FileInputStream(sourcePropertyFile));
         		sourceCon = DriverManager.getConnection(sourceConnectionURL, sourceProperties);
         	}
-        	LOGGER.fine("Connected to database " + sourceConnectionURL);
+        	logger.debug("Connected to database " + sourceConnectionURL);
         }
         else {
         	InitialContext ic;
         	ic = new InitialContext();
         	ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + sourceName.toLowerCase());
         	sourceCon = ds.getConnection();
-        	LOGGER.fine("Connected to database " + sourceName);
+        	logger.debug("Connected to database " + sourceName);
         }
         
-    	LOGGER.info("Opened source connection");
+    	logger.info("Opened source connection");
     
     }
     
@@ -207,11 +209,11 @@ public class DataDictionaryBean {
     	
     	DataSource ds = null;
     	
-    	LOGGER.info("Opening target connection");
+    	logger.info("Opening target connection");
     	
         if (targetName == null || targetName.equals("")) {
         	Class.forName(targetDatabaseDriver).newInstance();
-        	LOGGER.fine("Loaded database driver " + targetDatabaseDriver);
+        	logger.debug("Loaded database driver " + targetDatabaseDriver);
         	if (targetPropertyFile == null || targetPropertyFile.equals("")) {
                	targetCon = DriverManager.getConnection(targetConnectionURL, targetUserName, targetPassWord);
         	}
@@ -221,7 +223,7 @@ public class DataDictionaryBean {
                	targetCon = DriverManager.getConnection(targetConnectionURL, targetProperties);
         	}
         	
-         	LOGGER.fine("Connected to database " + targetConnectionURL);
+         	logger.debug("Connected to database " + targetConnectionURL);
         }
         else {
         	InitialContext ic;
@@ -229,15 +231,15 @@ public class DataDictionaryBean {
         	ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + targetName.toLowerCase());
         	
         	targetCon = ds.getConnection();
-        	LOGGER.fine("Connected to database " + sourceName);
+        	logger.debug("Connected to database " + sourceName);
         }
         
-    	LOGGER.info("Opened target connection");
+    	logger.info("Opened target connection");
     	
     }
     
     // Column definition methods
-    public String defineColumn(
+    public String dedebugColumn(
     		String dbProduct,
     		String colType,
     		int colSize,
@@ -295,7 +297,7 @@ public class DataDictionaryBean {
     }
     
     // Get definition string for column
-    public String defineOriginalColumn(
+    public String dedebugOriginalColumn(
     		String colType,
     		int colSize,
     		int colPrecision,
@@ -325,7 +327,7 @@ public class DataDictionaryBean {
        		sqlText = sourceQuery;
        	}
     	
-       	LOGGER.info("SQL: " + sqlText + ": getting columns...");
+       	logger.info("SQL: " + sqlText + ": getting columns...");
         
        	openSourceConnection();
         PreparedStatement columnStmt = sourceCon.prepareStatement(sqlText);
@@ -346,26 +348,26 @@ public class DataDictionaryBean {
 	        		}
 	        	}
         	}
-           	sourceColumnDefinitions[i - 1] = defineColumn(
+           	sourceColumnDefinitions[i - 1] = dedebugColumn(
            		sourceCon.getMetaData().getDatabaseProductName(),
            		rsmd.getColumnTypeName(i),
            		rsmd.getColumnDisplaySize(i),
            		rsmd.getPrecision(i),
            		rsmd.getScale(i)
            	);
-           	sourceColumnOriginalDefinitions[i - 1] = defineOriginalColumn(
+           	sourceColumnOriginalDefinitions[i - 1] = dedebugOriginalColumn(
                		rsmd.getColumnTypeName(i),
                		rsmd.getColumnDisplaySize(i),
                		rsmd.getPrecision(i),
                		rsmd.getScale(i)
             );
-           	LOGGER.info("FOUND COLUMN Position: " + (i) + "  Name: " + sourceColumnNames[i - 1] + "  Definition: " + sourceColumnDefinitions[i - 1]);
+           	logger.info("FOUND COLUMN Position: " + (i) + "  Name: " + sourceColumnNames[i - 1] + "  Definition: " + sourceColumnDefinitions[i - 1]);
        	}
         rs.close();
         columnStmt.close();
         ResultSet rspk = sourceCon.getMetaData().getPrimaryKeys(null, null, sourceTable.split("\\.")[sourceTable.split("\\.").length-1]);
         while (rspk.next()) {
-        	LOGGER.info("PRIMARY KEY Position: " + rspk.getObject("KEY_SEQ") + " Column: " + rspk.getObject("COLUMN_NAME"));
+        	logger.info("PRIMARY KEY Position: " + rspk.getObject("KEY_SEQ") + " Column: " + rspk.getObject("COLUMN_NAME"));
          	for (int i = 0; i < sourceColumnNames.length; i++) {
          		if (sourceColumnNames[i].equalsIgnoreCase(rspk.getString("COLUMN_NAME"))) {
          			sourceColumnPkPositions[i] = rspk.getInt("KEY_SEQ");
@@ -375,13 +377,13 @@ public class DataDictionaryBean {
         rspk.close();
 	    sourceCon.close();
 
-       	LOGGER.info("SQL: " + sqlText + ": got columns");
+       	logger.info("SQL: " + sqlText + ": got columns");
     }
     
     public void retrieveMappingDefinition() throws Exception {
     	
     	// Load mapping definition file
-    	LOGGER.info("LOADING MAP DEFINITION FILE " + mappingDefFile + "...");
+    	logger.info("LOADING MAP DEFINITION FILE " + mappingDefFile + "...");
     	
     	org.w3c.dom.Document mappingXML = null;
     	
@@ -420,27 +422,27 @@ public class DataDictionaryBean {
  				targetDefaultValues[i] = eElement.getElementsByTagName("value").item(0).getChildNodes().item(0).getNodeValue();
  			}
 		}
-    	LOGGER.info("LOADED MAP DEFINITION FILE");
+    	logger.info("LOADED MAP DEFINITION FILE");
     }
 
     // Insert column definition in the given table
     public void executeInsert() throws Exception {
-        LOGGER.info("########################################");
-    	LOGGER.info("INSERTING DATA...");
+        logger.info("########################################");
+    	logger.info("INSERTING DATA...");
 
     	String insertText;
     	openTargetConnection();    	
         PreparedStatement targetStmt;
         insertText = "DELETE " + targetTable;
-	    LOGGER.info(insertText);
+	    logger.info(insertText);
        	targetStmt = targetCon.prepareStatement(insertText);
         targetStmt.executeUpdate();
         targetStmt.close();
-	    LOGGER.info("Rows deleted");
+	    logger.info("Rows deleted");
         insertText = "INSERT /*+APPEND*/ INTO " + targetTable +"(" + targetColumns + ") VALUES (?,?,?,?)";
 	    
-	    LOGGER.info(insertText);
-	    LOGGER.fine("Statement prepared");
+	    logger.info(insertText);
+	    logger.debug("Statement prepared");
 	    
 	    int rowCount = 0;
 	    
@@ -462,8 +464,8 @@ public class DataDictionaryBean {
         targetCon.commit();
 	    targetCon.close();
 
-	    LOGGER.info(rowCount + " rows totally inserted");
-	    LOGGER.info(rowCount + " INSERT COMPLETED");
-	    LOGGER.info("########################################");
+	    logger.info(rowCount + " rows totally inserted");
+	    logger.info(rowCount + " INSERT COMPLETED");
+	    logger.info("########################################");
     }
 }

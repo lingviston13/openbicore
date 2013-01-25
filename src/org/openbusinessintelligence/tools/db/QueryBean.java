@@ -8,6 +8,8 @@ import javax.naming.*;
 import javax.sql.*;
 import javax.sql.rowset.*;
 
+import org.slf4j.LoggerFactory;
+
 import com.sun.rowset.*;
 
 /**
@@ -17,7 +19,7 @@ import com.sun.rowset.*;
  */
 public class QueryBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(QueryBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(QueryBean.class);
 
 	// Declarations of bean properties
     private String connectionPropertyFile = "";
@@ -119,10 +121,10 @@ public class QueryBean {
 		if (sourceName.equals("") || sourceName == null) {
 			try {
 				Class.forName(databaseDriver).newInstance();
-				LOGGER.info("Database driver loaded");
+				logger.info("Database driver loaded");
 			}
 			catch (Exception e){
-				LOGGER.severe("Cannot load database driver " + databaseDriver + ":\n" + e.getMessage());
+				logger.error("Cannot load database driver " + databaseDriver + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
@@ -133,7 +135,7 @@ public class QueryBean {
 				webRS.setPassword(passWord);
 			}
 			catch(Exception e) {
-				LOGGER.severe("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
+				logger.error("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
@@ -144,7 +146,7 @@ public class QueryBean {
 				webRS.setDataSourceName("java:comp/env/jdbc/" + sourceName.toLowerCase());
 			}
 			catch(SQLException e) {
-				LOGGER.severe("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
+				logger.error("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
@@ -154,18 +156,18 @@ public class QueryBean {
 			webRS.setCommand(queryText);
 			try {
 				for (int i = 0; i < queryParameters.length; i++) {
-					LOGGER.info("Param "+ i + ": " + queryParameters[i]);
+					logger.info("Param "+ i + ": " + queryParameters[i]);
 					webRS.setObject(i + 1, queryParameters[i]);
 				}
 			}
 			catch(NullPointerException e) {
-				LOGGER.severe("No query parameters defined:\n" + e.getMessage());
+				logger.error("No query parameters dedebugd:\n" + e.getMessage());
 			}
 			webRS.execute();
-			LOGGER.info("Dataset generated.");
+			logger.info("Dataset generated.");
 		}
 		catch (SQLException e) {
-			LOGGER.severe("Cannot generate dataset:\n" + e.getMessage());
+			logger.error("Cannot generate dataset:\n" + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -186,19 +188,19 @@ public class QueryBean {
 		if (sourceName.equals("") || sourceName == null) {
 			try {
 				Class.forName(databaseDriver).newInstance();
-				LOGGER.info("Loaded database driver " + databaseDriver);
+				logger.info("Loaded database driver " + databaseDriver);
 			}
 			catch (Exception e){
-				LOGGER.severe("Cannot load database driver " + databaseDriver + ":\n" + e.getMessage());
+				logger.error("Cannot load database driver " + databaseDriver + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
 			try {
 				con = DriverManager.getConnection(connectionURL, userName, passWord);
-				LOGGER.info("Connected to database " + connectionURL);
+				logger.info("Connected to database " + connectionURL);
 			}
 			catch (SQLException e){
-				LOGGER.severe("Cannot connect to database " + connectionURL + ":\n" + e.getMessage());
+				logger.error("Cannot connect to database " + connectionURL + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
@@ -210,16 +212,16 @@ public class QueryBean {
 				qryDs = (DataSource)ic.lookup("java:comp/env/jdbc/" + sourceName.toLowerCase());
 			}
 			catch (NamingException e) {
-				LOGGER.severe( "Cannot find datasource " + sourceName + ":\n" + e.getMessage());
+				logger.error( "Cannot find datasource " + sourceName + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
 			try {
 				con = qryDs.getConnection();
-				LOGGER.info("Connected to database " + sourceName);
+				logger.info("Connected to database " + sourceName);
 			}
 			catch(SQLException e) {
-				LOGGER.severe( "Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
+				logger.error( "Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
 				e.printStackTrace();
 				throw e;
 			}
@@ -229,12 +231,12 @@ public class QueryBean {
 			prepStmt = con.prepareStatement(queryText);
 			try {
 				for (int i = 0; i < queryParameters.length; i++) {
-					LOGGER.info("Param "+ i + ": " + queryParameters[i]);
+					logger.info("Param "+ i + ": " + queryParameters[i]);
 					prepStmt.setString(i + 1, queryParameters[i]);
 				}
 			}
 			catch(NullPointerException e) {
-				LOGGER.info("No query parameters defined");
+				logger.info("No query parameters dedebugd");
 			}
 			//Open result set
 			rs = prepStmt.executeQuery();
@@ -251,11 +253,11 @@ public class QueryBean {
 			rs.close();
 			prepStmt.close();
 			con.close();
-			LOGGER.info("Dataset generated.");
+			logger.info("Dataset generated.");
 
 		}
 		catch (SQLException e) {
-			LOGGER.severe( "Cannot generate dataset:\n" + e.getMessage());
+			logger.error( "Cannot generate dataset:\n" + e.getMessage());
 			e.printStackTrace();
 			try {
 				con.close();
@@ -277,10 +279,10 @@ public class QueryBean {
 		if (sourceName.equals("") || sourceName == null) {
 			try {
 				Class.forName(databaseDriver).newInstance();
-				LOGGER.info("Loaded database driver " + databaseDriver);
+				logger.info("Loaded database driver " + databaseDriver);
 			}
 			catch (Exception e){
-				LOGGER.severe("Cannot load database driver " + databaseDriver + ":\n" + e.getMessage());
+				logger.error("Cannot load database driver " + databaseDriver + ":\n" + e.getMessage());
 				e.printStackTrace();
 			}
 			try {
@@ -290,7 +292,7 @@ public class QueryBean {
 				webRS.setPassword(passWord);
 			}
 			catch(SQLException e) {
-				LOGGER.severe("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
+				logger.error("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -300,7 +302,7 @@ public class QueryBean {
 				webRS.setDataSourceName("java:comp/env/jdbc/" + sourceName.toLowerCase());
 			}
 			catch(SQLException e) {
-				LOGGER.severe("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
+				logger.error("Cannot connect to datasource " + sourceName + ":\n" + e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -309,19 +311,19 @@ public class QueryBean {
 			webRS.setCommand(queryText);
 			try {
 				for (int i = 0; i < queryParameters.length; i++) {
-					LOGGER.info("Param "+ i + ": " + queryParameters[i]);
+					logger.info("Param "+ i + ": " + queryParameters[i]);
 					webRS.setObject(i + 1, queryParameters[i]);
 				}
 			}
 			catch(NullPointerException e) {
-				LOGGER.info("No query parameters defined");
+				logger.info("No query parameters dedebugd");
 			}
 			webRS.execute();
-			LOGGER.info("Dataset generated.");
+			logger.info("Dataset generated.");
 
 		}
 		catch (SQLException e) {
-			LOGGER.severe("Cannot generate dataset:\n" + e.getMessage());
+			logger.error("Cannot generate dataset:\n" + e.getMessage());
 			e.printStackTrace();
 		}
 	}

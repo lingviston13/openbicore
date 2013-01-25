@@ -8,6 +8,7 @@ import javax.naming.*;
 import javax.sql.*;
 import javax.xml.parsers.*;
 
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
 /**
@@ -16,7 +17,7 @@ import org.w3c.dom.*;
  */
 public class TableCopyBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(TableCopyBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(TableCopyBean.class);
 
     // Declarations of bean properties
 	// Source properties
@@ -165,36 +166,36 @@ public class TableCopyBean {
    	
     	DataSource ds = null;
     	
-    	LOGGER.info("Opening source connection...");
+    	logger.info("Opening source connection...");
     	
         if (sourceName == null ||sourceName.equals("")) {
         	Class.forName(sourceDatabaseDriver).newInstance();
-        	LOGGER.info("Loaded database driver " + sourceDatabaseDriver);
+        	logger.info("Loaded database driver " + sourceDatabaseDriver);
         	if (sourcePropertyFile == null || sourcePropertyFile.equals("")) {
             	
-            	LOGGER.info("Using username & password");
+            	logger.info("Using username & password");
         		
             	sourceCon = DriverManager.getConnection(sourceConnectionURL, sourceUserName, sourcePassWord);
         	}
         	else {
             	
-            	LOGGER.info("Using property file " + sourcePropertyFile);
+            	logger.info("Using property file " + sourcePropertyFile);
         		
             	sourceProperties = new Properties();
         		sourceProperties.load(new FileInputStream(sourcePropertyFile));
         		sourceCon = DriverManager.getConnection(sourceConnectionURL, sourceProperties);
         	}
-        	LOGGER.fine("Connected to database " + sourceConnectionURL);
+        	logger.debug("Connected to database " + sourceConnectionURL);
         }
         else {
         	InitialContext ic;
         	ic = new InitialContext();
         	ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + sourceName.toLowerCase());
         	sourceCon = ds.getConnection();
-        	LOGGER.fine("Connected to database " + sourceName);
+        	logger.debug("Connected to database " + sourceName);
         }
         
-    	LOGGER.info("Opened source connection");
+    	logger.info("Opened source connection");
     	
     }
     
@@ -202,11 +203,11 @@ public class TableCopyBean {
     	
     	DataSource ds = null;
     	
-    	LOGGER.info("Opening target connection");
+    	logger.info("Opening target connection");
     	
         if (targetName == null || targetName.equals("")) {
         	Class.forName(targetDatabaseDriver).newInstance();
-        	LOGGER.fine("Loaded database driver " + targetDatabaseDriver);
+        	logger.debug("Loaded database driver " + targetDatabaseDriver);
         	if (targetPropertyFile == null || targetPropertyFile.equals("")) {
                	targetCon = DriverManager.getConnection(targetConnectionURL, targetUserName, targetPassWord);
         	}
@@ -216,7 +217,7 @@ public class TableCopyBean {
                	targetCon = DriverManager.getConnection(targetConnectionURL, targetProperties);
         	}
         	
-         	LOGGER.fine("Connected to database " + targetConnectionURL);
+         	logger.debug("Connected to database " + targetConnectionURL);
         }
         else {
         	InitialContext ic;
@@ -224,10 +225,10 @@ public class TableCopyBean {
         	ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + targetName.toLowerCase());
         	
         	targetCon = ds.getConnection();
-        	LOGGER.fine("Connected to database " + sourceName);
+        	logger.debug("Connected to database " + sourceName);
         }
         
-    	LOGGER.info("Opened target connection");
+    	logger.info("Opened target connection");
     	
     }
     
@@ -235,7 +236,7 @@ public class TableCopyBean {
 
     	String[] columns = null;
        	
-       	LOGGER.info("SQL: " + sqlText + ": getting columns...");
+       	logger.info("SQL: " + sqlText + ": getting columns...");
         
         PreparedStatement columnStmt = con.prepareStatement(sqlText);
         ResultSet rs = columnStmt.executeQuery();
@@ -243,15 +244,15 @@ public class TableCopyBean {
         columns = new String[rsmd.getColumnCount()];
         for (int i = 1; i <= rsmd.getColumnCount(); i++) {
         	columns[i - 1] = rsmd.getColumnName(i);
-           	LOGGER.info("Found column: " + columns[i - 1]);
+           	logger.info("Found column: " + columns[i - 1]);
         }
-        LOGGER.info("SQL: " + sqlText + ": got columns");
+        logger.info("SQL: " + sqlText + ": got columns");
     	return columns;
     }
 
     public void retrieveColumnList() throws Exception {
-    	LOGGER.info("########################################");
-    	LOGGER.info("RETRIEVING COLUMN LIST...");
+    	logger.info("########################################");
+    	logger.info("RETRIEVING COLUMN LIST...");
        	
        	String sql;
        	if (sourceQuery == null || sourceQuery.equals("")) {
@@ -282,14 +283,14 @@ public class TableCopyBean {
         commonColumns = new String[list.size()];
         list.toArray(commonColumns);
         
-        LOGGER.info("COLUMN LIST RETRIEVED");
-        LOGGER.info("########################################");
+        logger.info("COLUMN LIST RETRIEVED");
+        logger.info("########################################");
     }
     
     public void retrieveMappingDefinition() throws Exception {
     	
     	// Load mapping definition file
-    	LOGGER.info("LOADING MAP DEFINITION FILE " + mappingDefFile + "...");
+    	logger.info("LOADING MAP DEFINITION FILE " + mappingDefFile + "...");
     	
     	Document mappingXML = null;
     	
@@ -328,13 +329,13 @@ public class TableCopyBean {
  				targetDefaultValues[i] = eElement.getElementsByTagName("value").item(0).getChildNodes().item(0).getNodeValue();
  			}
 		}
-    	LOGGER.info("LOADED MAP DEFINITION FILE");
+    	logger.info("LOADED MAP DEFINITION FILE");
     }
 
     // Execution methods
     public void executeSelect() throws Exception {
-    	LOGGER.info("########################################");
-    	LOGGER.info("GETTING DATA");
+    	logger.info("########################################");
+    	logger.info("GETTING DATA");
 
     	openSourceConnection();
     	
@@ -362,24 +363,24 @@ public class TableCopyBean {
     		queryText = sourceQuery;
     	}
     	
-		LOGGER.info(queryText);
+		logger.info(queryText);
     	
         sourceStmt = sourceCon.prepareStatement(queryText);
 	    sourceRS = sourceStmt.executeQuery();
-	    LOGGER.fine("DATA READY");
+	    logger.debug("DATA READY");
 	    
-        LOGGER.info("GOT DATA");
-        LOGGER.info("########################################");
+        logger.info("GOT DATA");
+        logger.info("########################################");
     }
 
     public void executeInsert() throws Exception {
-        LOGGER.info("########################################");
-    	LOGGER.info("INSERTING DATA...");
+        logger.info("########################################");
+    	logger.info("INSERTING DATA...");
     	
     	openTargetConnection();
     	targetCon.setAutoCommit(false);
         PreparedStatement targetStmt;
-        LOGGER.info("Preserve target data = " + preserveDataOption);
+        logger.info("Preserve target data = " + preserveDataOption);
         if (!preserveDataOption) {
            	targetStmt = targetCon.prepareStatement("TRUNCATE TABLE " + targetTable);
             targetStmt.executeUpdate();
@@ -429,12 +430,12 @@ public class TableCopyBean {
 	    
 	    insertText = insertText + ")";
 	    
-	    LOGGER.fine(insertText);
-	    LOGGER.fine("Statement prepared");
+	    logger.debug(insertText);
+	    logger.debug("Statement prepared");
 	    
 	    int rowCount = 0;
 	    int rowSinceCommit = 0;
-	    LOGGER.info("Commit every " + commitFrequency + " rows");
+	    logger.info("Commit every " + commitFrequency + " rows");
     	targetStmt = targetCon.prepareStatement(insertText);
     	targetStmt.setFetchSize(commitFrequency);
 	    
@@ -479,16 +480,16 @@ public class TableCopyBean {
 	            }
 	        }
 	        catch(Exception e) {
-	        	LOGGER.severe("Unexpected exception, list of column values:");
+	        	logger.error("Unexpected exception, list of column values:");
 	        	for (int i = 0; i < commonColumns.length; i++) {
 	        		try {
-	        			LOGGER.severe("########################################\n" + commonColumns[i] + " ==> " + sourceRS.getObject(commonColumns[i]).toString());
+	        			logger.error("########################################\n" + commonColumns[i] + " ==> " + sourceRS.getObject(commonColumns[i]).toString());
 				    }
 	        		catch(NullPointerException npe) {
-	        			LOGGER.severe("########################################\n" + commonColumns[i]);
+	        			logger.error("########################################\n" + commonColumns[i]);
 			        }
 	            }
-	            LOGGER.severe(e.getMessage());
+	            logger.error(e.getMessage());
 	            throw e;
 	        }
 	    	targetStmt.executeUpdate();
@@ -499,7 +500,7 @@ public class TableCopyBean {
 	    	if (rowSinceCommit==commitFrequency) {
 	    		targetCon.commit();
 	    		rowSinceCommit = 0;
-	    		LOGGER.info(rowCount + " rows inserted");
+	    		logger.info(rowCount + " rows inserted");
 	    	}
 	    }
     	targetStmt.close();
@@ -510,8 +511,8 @@ public class TableCopyBean {
 	    sourceStmt.close();
 	    sourceCon.close();
 
-	    LOGGER.info(rowCount + " rows totally inserted");
-	    LOGGER.info("INSERT COMPLETED");
-	    LOGGER.info("########################################");
+	    logger.info(rowCount + " rows totally inserted");
+	    logger.info("INSERT COMPLETED");
+	    logger.info("########################################");
     }
 }

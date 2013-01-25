@@ -8,6 +8,8 @@ import java.io.*;
 import javax.xml.validation.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
+
+import org.slf4j.LoggerFactory;
 import org.xml.sax.*;
 
 /**
@@ -16,7 +18,7 @@ import org.xml.sax.*;
  */
 public class ValidatorBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ValidatorBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(ValidatorBean.class);
 
 	private String schemaFileName = null;
 	private String sourceFileName = null;

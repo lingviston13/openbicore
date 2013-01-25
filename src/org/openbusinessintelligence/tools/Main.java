@@ -4,15 +4,17 @@ import java.io.*;
 import java.util.*;
 import javax.xml.parsers.*;
 
-import org.openbusinessintelligence.tools.file.*;
-import org.openbusinessintelligence.tools.xml.*;
-import org.openbusinessintelligence.tools.script.*;
+import org.slf4j.*;
 import org.w3c.dom.*;
 import org.apache.commons.cli.*;
 
+import org.openbusinessintelligence.tools.file.*;
+import org.openbusinessintelligence.tools.xml.*;
+//import org.openbusinessintelligence.tools.script.*;
+
 public class Main {
 	
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Main.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(Main.class);
 	
 	private static Options cmdOptions;
 	private static Properties properties;
@@ -23,9 +25,8 @@ public class Main {
 	 * Arguments
 	 */	
 	public static void main(String[] args) throws Exception {
-		
-		LOGGER.info("###################################################################");
-		LOGGER.info("START");
+		logger.info("###################################################################");
+		logger.info("START");
 		
 		configureCmdOptions();
 		CommandLineParser parser = new PosixParser();
@@ -34,7 +35,7 @@ public class Main {
 			cmd = parser.parse(cmdOptions, args);
 		}
 		catch(Exception e) {
-		    LOGGER.severe("Unexpected exception:" + e.getMessage());
+			logger.error("Unexpected exception:" + e.getMessage());
 		    throw e;
 		}
 		
@@ -50,7 +51,7 @@ public class Main {
 		    	properties.load(new FileInputStream(cmd.getOptionValue("propertyfile")));
             }
     		catch(Exception e) {
-    			LOGGER.severe("Cannot read property file:\n" + e.getMessage());
+    			logger.error("Cannot read property file:\n" + e.getMessage());
     		    throw e;
     		}
 	    }
@@ -174,8 +175,8 @@ public class Main {
 					procedure.execute();
 				}
 				catch (Exception e) {
-					LOGGER.severe("UNEXPECTED EXCEPTION");
-					LOGGER.severe(e.getMessage());
+					logger.error("UNEXPECTED EXCEPTION");
+					logger.error(e.getMessage());
 				    throw e;
 				}
 	    	}
@@ -215,8 +216,8 @@ public class Main {
 					tableCopy.executeInsert();
 				}
 				catch (Exception e) {
-					LOGGER.severe("UNEXPECTED EXCEPTION");
-					LOGGER.severe(e.getMessage());
+					logger.error("UNEXPECTED EXCEPTION");
+					logger.error(e.getMessage());
 				    throw e;
 				}
 	    	}
@@ -244,8 +245,8 @@ public class Main {
 					importCsvSeries.importCsvSeries();
 				}
 				catch (Exception e) {
-					LOGGER.severe("UNEXPECTED EXCEPTION");
-					LOGGER.severe(e.getMessage());
+					logger.error("UNEXPECTED EXCEPTION");
+					logger.error(e.getMessage());
 				    throw e;
 				}
 	    	}
@@ -280,8 +281,8 @@ public class Main {
 					dataDictionary.executeInsert();
 				}
 				catch (Exception e) {
-					LOGGER.severe("UNEXPECTED EXCEPTION");
-					LOGGER.severe(e.getMessage());
+					logger.error("UNEXPECTED EXCEPTION");
+					logger.error(e.getMessage());
 				    throw e;
 				}
 	    	}
@@ -298,14 +299,14 @@ public class Main {
 					fileMerge.mergeFiles();
 				}
 				catch (Exception e) {
-					LOGGER.severe("UNEXPECTED EXCEPTION");
-					LOGGER.severe(e.getMessage());
+					logger.error("UNEXPECTED EXCEPTION");
+					logger.error(e.getMessage());
 				    throw e;
 				}
 	    	}
 		}
-		LOGGER.info("FINISH");
-		LOGGER.info("###################################################################");
+	    logger.info("FINISH");
+	    logger.info("###################################################################");
 	}
 	
 	private static void configureCmdOptions() throws Exception {
@@ -322,7 +323,7 @@ public class Main {
 			optionsXML.getDocumentElement().normalize();
 		}
 		catch(Exception e) {
-			LOGGER.severe("Cannot load option file:\n" + e.getMessage());
+			logger.error("Cannot load option file:\n" + e.getMessage());
 		    throw e;
 		}
 		NodeList nList = optionsXML.getElementsByTagName("option");

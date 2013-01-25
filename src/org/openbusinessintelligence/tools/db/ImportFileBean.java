@@ -1,8 +1,10 @@
 package org.openbusinessintelligence.tools.db;
 
+import org.slf4j.LoggerFactory;
+
 public class ImportFileBean {
 	
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ImportFileBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(ImportFileBean.class);
 
 	private String databaseDriver = "";
 	private String connectionURL = "";

@@ -4,10 +4,13 @@ import java.util.*;
 import javax.naming.*;
 import javax.naming.directory.*;
 
+import org.openbusinessintelligence.tools.jms.MessageBean;
+import org.slf4j.LoggerFactory;
+
 
 public class DirectoryCopyBean {
-	
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(DirectoryCopyBean.class.getPackage().getName());
+
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(DirectoryCopyBean.class);
 
     // Declarations of bean properties
 	// Source properties

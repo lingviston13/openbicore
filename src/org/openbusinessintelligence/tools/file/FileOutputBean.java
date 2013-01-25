@@ -4,13 +4,15 @@ import java.io.*;
 import java.sql.*;
 import javax.sql.rowset.*;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class to facilitate the use of files as output targets
  * @author marangon
  */
 public class FileOutputBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(FileOutputBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(FileOutputBean.class);
 
 	private WebRowSet webRS;
 	private String contentString;

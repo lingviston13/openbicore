@@ -4,9 +4,11 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.*;
 
+import org.slf4j.LoggerFactory;
+
 public class FileMergeBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(FileMergeBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(FileMergeBean.class);
 
     // Declarations of bean properties
 	private String inputZipFile = "";
@@ -58,7 +60,7 @@ public class FileMergeBean {
 		
     	if (!(inputZipFile == null || inputZipFile.equals("")) ) {
     		
-        	LOGGER.info("Reading entries in zip file " + inputZipFile);
+        	logger.info("Reading entries in zip file " + inputZipFile);
     		
     		ZipFile zipFile = new ZipFile(inputZipFile);
     		Enumeration entries = zipFile.entries();
@@ -66,7 +68,7 @@ public class FileMergeBean {
     		while(entries.hasMoreElements()) {
     			ZipEntry entry = (ZipEntry)entries.nextElement();
     			if(!entry.isDirectory()) {
-    				LOGGER.info("IMPORTING ENTRY " + entry.getName());
+    				logger.info("IMPORTING ENTRY " + entry.getName());
     				BufferedReader reader = new BufferedReader(new InputStreamReader(zipFile.getInputStream(entry)));
     				
     				String line;
@@ -83,11 +85,11 @@ public class FileMergeBean {
     				}
     				
             		reader.close();
-    				LOGGER.info("ENTRY " + entry.getName() + " IMPORTED");
+    				logger.info("ENTRY " + entry.getName() + " IMPORTED");
     			}
     		}
     		
-        	LOGGER.info("ZIP FILE " + inputZipFile + " COMPLETED");
+        	logger.info("ZIP FILE " + inputZipFile + " COMPLETED");
     	}
 		for (int i=0; i<outputFileNames.length; i++) {
 			outputFiles.get(i).close();

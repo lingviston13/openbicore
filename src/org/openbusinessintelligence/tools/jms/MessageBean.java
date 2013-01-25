@@ -4,14 +4,17 @@ import java.util.*;
 import javax.jms.*;
 import javax.naming.*;
 
+import org.openbusinessintelligence.tools.file.FileOutputBean;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class to facilitate the interaction with a jms server
  * @author marangon
  */
 public class MessageBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(MessageBean.class.getPackage().getName());
-
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(MessageBean.class);
+	
     // Declarations of bean properties
     private Properties serverEnvironment;
     private String connectionFactoryName = null;

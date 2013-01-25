@@ -4,6 +4,9 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
+import org.openbusinessintelligence.tools.ldap.DirectoryCopyBean;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Class for sending of emails
@@ -11,7 +14,7 @@ import javax.mail.internet.*;
  */
 public class MailBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(MailBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(MailBean.class);
 
 	private String smtpServer;
 	private String senderAddress;
@@ -63,7 +66,7 @@ public class MailBean {
 	
 	// Send an email
 	public void sendMail() {
-		LOGGER.info("Sending email");
+		logger.info("Sending email");
 		Properties properties = System.getProperties();
 		properties.setProperty("mail.smtp.host", smtpServer);
 		Session session = Session.getDefaultInstance(properties);
@@ -75,10 +78,10 @@ public class MailBean {
 			message.setContent(mailContent,"text/html");
 			
 			Transport.send(message);
-			LOGGER.info("Email sent");
+			logger.info("Email sent");
 		}
 		catch (Exception e) {
-			LOGGER.severe("Cannot send email:\n" + e.getMessage());
+			logger.error("Cannot send email:\n" + e.getMessage());
 		}
 	}
 	

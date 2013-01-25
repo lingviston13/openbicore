@@ -1,6 +1,9 @@
 package org.openbusinessintelligence.tools.db;
 
 import java.sql.*;
+
+import org.slf4j.LoggerFactory;
+
 import com.sun.rowset.*;
 
 /**
@@ -9,7 +12,7 @@ import com.sun.rowset.*;
  */
 public class TableBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(TableBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(TableBean.class);
 
 	// Declarations of bean properties
 	private String databaseDriver = "";
@@ -163,7 +166,7 @@ public class TableBean {
 				}
 			}
 			catch(NullPointerException e) {
-				System.out.println("No insert values defined");
+				System.out.println("No insert values dedebugd");
 			}
 			webRS.insertRow();
 			System.out.println("Values inserted.");

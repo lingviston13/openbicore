@@ -5,13 +5,16 @@ import java.io.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 
+import org.openbusinessintelligence.tools.toad.ToadProjectFileCreator;
+import org.slf4j.LoggerFactory;
+
 /**
  * Transform an XML input into an XML output using a XSL stylesheet
  * @author marangon
  */
 public class TransformerBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(TransformerBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(TransformerBean.class);
 
 	private Reader styleSheet;
 	private Writer xmlOutput;

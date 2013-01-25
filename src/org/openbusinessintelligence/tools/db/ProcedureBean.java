@@ -7,13 +7,15 @@ import java.util.*;
 import javax.naming.*;
 import javax.sql.*;
 
+import org.slf4j.LoggerFactory;
+
 /**
  * This class contains methods to execute procedures stored in a RDBMS
  * @author marangon
  */
 public class ProcedureBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(ProcedureBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(ProcedureBean.class);
 
 	// Declarations of bean properties
     private String propertyFile = "";
@@ -103,36 +105,36 @@ public class ProcedureBean {
        	
     	DataSource ds = null;
     	
-    	LOGGER.info("Opening source connection...");
+    	logger.info("Opening source connection...");
     	
         if (sourceName == null ||sourceName.equals("")) {
         	Class.forName(databaseDriver).newInstance();
-        	LOGGER.info("Loaded database driver " + databaseDriver);
+        	logger.info("Loaded database driver " + databaseDriver);
         	if (propertyFile == null || propertyFile.equals("")) {
             	
-            	LOGGER.info("Using username & password");
+            	logger.info("Using username & password");
         		
             	con = DriverManager.getConnection(connectionURL, userName, passWord);
         	}
         	else {
             	
-            	LOGGER.info("Using property file " + propertyFile);
+            	logger.info("Using property file " + propertyFile);
         		
             	properties = new Properties();
         		properties.load(new FileInputStream(propertyFile));
         		con = DriverManager.getConnection(connectionURL, properties);
         	}
-        	LOGGER.fine("Connected to database " + connectionURL);
+        	logger.debug("Connected to database " + connectionURL);
         }
         else {
         	InitialContext ic;
         	ic = new InitialContext();
         	ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + sourceName.toLowerCase());
         	con = ds.getConnection();
-        	LOGGER.fine("Connected to database " + sourceName);
+        	logger.debug("Connected to database " + sourceName);
         }
         
-    	LOGGER.info("Opened source connection");
+    	logger.info("Opened source connection");
     	
     }
 
@@ -150,7 +152,7 @@ public class ProcedureBean {
 				}
 			}
 			catch(NullPointerException e) {
-				System.out.println("No procedure parameters defined");
+				System.out.println("No procedure parameters dedebugd");
 			}
 			//Execute statement
 			callStmt.execute();

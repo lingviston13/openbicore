@@ -4,6 +4,8 @@ import java.util.*;
 import javax.naming.*;
 import javax.naming.directory.*;
 
+import org.slf4j.LoggerFactory;
+
 
 /**
  * @author Nicola Marangoni
@@ -12,6 +14,8 @@ import javax.naming.directory.*;
  */
 
 public class LdapExchange {
+
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(LdapExchange.class);
 
 	private static DirContext sourceCtx;
 	private static DirContext targetCtx;

@@ -3,6 +3,7 @@ package org.openbusinessintelligence.tools.script;
 import java.io.*;
 
 import org.openbusinessintelligence.tools.file.*;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -11,7 +12,7 @@ import org.openbusinessintelligence.tools.file.*;
  */
 public class WrapperScriptCreator {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(WrapperScriptCreator.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(WrapperScriptCreator.class);
 
 	private static String rootDir = "";
 	private static FileOutputBean wrapperFile = new FileOutputBean();

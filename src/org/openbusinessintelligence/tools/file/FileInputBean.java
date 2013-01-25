@@ -14,6 +14,9 @@ package org.openbusinessintelligence.tools.file;
 
 import java.io.*;
 
+import org.openbusinessintelligence.tools.db.TableCopyBean;
+import org.slf4j.LoggerFactory;
+
 /**
  * Utility class to facilitate the use of files as input sources
  * @author marangon
@@ -21,7 +24,7 @@ import java.io.*;
 
 public class FileInputBean {
 
-	private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(FileInputBean.class.getPackage().getName());
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(FileInputBean.class);
 
     // Declarations of bean properties
 	private String directoryName = "";
@@ -58,7 +61,7 @@ public class FileInputBean {
 			reader =new BufferedReader(fileReader);
 		}
 		catch (Exception e) {
-			LOGGER.severe("File " + filePath + " not found:\n" + e.getMessage());
+			logger.error("File " + filePath + " not found:\n" + e.getMessage());
 			throw e;
 		}
 		return reader;
@@ -73,7 +76,7 @@ public class FileInputBean {
 			bufferedReader =new BufferedReader(fileReader);
 		}
 		catch (Exception e) {
-			LOGGER.severe("File " + filePath + " not found:\n" + e.getMessage());
+			logger.error("File " + filePath + " not found:\n" + e.getMessage());
 			throw e;
 		}
 		String lineBuffer;
@@ -84,7 +87,7 @@ public class FileInputBean {
 			}
 		}
 		catch (Exception e) {
-			LOGGER.severe("File IO error:\n" + e.getMessage());
+			logger.error("File IO error:\n" + e.getMessage());
 			throw e;
 		}
 		return fileContent;
