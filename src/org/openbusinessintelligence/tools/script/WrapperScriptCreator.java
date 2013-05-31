@@ -64,8 +64,6 @@ public class WrapperScriptCreator {
 		}
 		for ( int i = 0 ; i < strFilesDirs.length ; i ++ ) {
 			String path = strFilesDirs[i].toString();
-			String[] arrPath = path.split("\\\\");
-			String name = arrPath[arrPath.length - 1];
 			if (strFilesDirs[i].isFile()) {
 				writer.write("@" + path.replace(rootDir + "\\", "") + ";\n");
 				System.out.println("@" + path.replace(rootDir + "\\", "") + ";\n");

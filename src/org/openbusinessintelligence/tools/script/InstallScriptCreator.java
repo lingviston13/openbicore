@@ -3,7 +3,6 @@ package org.openbusinessintelligence.tools.script;
 import java.io.*;
 
 import org.openbusinessintelligence.tools.file.*;
-import org.openbusinessintelligence.tools.mail.MailBean;
 import org.slf4j.LoggerFactory;
 
 public class InstallScriptCreator {

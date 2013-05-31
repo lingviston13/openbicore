@@ -4,7 +4,6 @@ import java.util.*;
 import javax.naming.*;
 import javax.naming.directory.*;
 
-import org.openbusinessintelligence.tools.jms.MessageBean;
 import org.slf4j.LoggerFactory;
 
 

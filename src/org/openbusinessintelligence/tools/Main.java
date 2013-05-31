@@ -197,7 +197,7 @@ public class Main {
 				tableCopy.setTargetConnectionURL(getOption("trgdbconnectionurl"));
 				tableCopy.setTargetUserName(getOption("trgdbusername"));
 				tableCopy.setTargetPassWord(getOption("trgdbpassword"));
-				tableCopy.setTargetTable(getOption("targettable"));		
+				tableCopy.setTargetTable(getOption("targettable"));
 				tableCopy.setPreserveDataOption(Boolean.parseBoolean(getOption("trgpreservedata")));
 				
 				String mappingDefFile = getOption("mapdeffile");
@@ -208,6 +208,10 @@ public class Main {
 				}
 				
 				try {
+					if (Boolean.parseBoolean(getOption("trgcreate"))) {
+						
+					}
+					
 					if (mappingDefFile!=null) {
 						tableCopy.retrieveMappingDefinition();
 					}
@@ -309,11 +313,12 @@ public class Main {
 	    logger.info("###################################################################");
 	}
 	
+	@SuppressWarnings("static-access")
 	private static void configureCmdOptions() throws Exception {
 		
 		cmdOptions = new Options();		
-		Option help = new Option("help", "Print this message");
-		cmdOptions.addOption(help);
+		Option option = new Option("help", "Print this message");
+		cmdOptions.addOption(option);
 		
 		org.w3c.dom.Document optionsXML = null;
 		try {
@@ -332,7 +337,7 @@ public class Main {
  			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
  				Element eElement = (Element) nNode;
  				//System.out.println("Option : " + eElement.getElementsByTagName("name").item(0).getChildNodes().item(0).getNodeValue());
- 				Option option = OptionBuilder.hasArg()
+ 				option = OptionBuilder.hasArg()
  						.withArgName(eElement.getElementsByTagName("argName").item(0).getChildNodes().item(0).getNodeValue())
  		                .withDescription(eElement.getElementsByTagName("description").item(0).getChildNodes().item(0).getNodeValue())
  		                .create(eElement.getElementsByTagName("name").item(0).getChildNodes().item(0).getNodeValue());

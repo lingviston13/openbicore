@@ -2,7 +2,6 @@ package org.openbusinessintelligence.tools.cmd;
 
 import java.io.*;
 
-import org.openbusinessintelligence.tools.Main;
 import org.slf4j.*;
 
 /**

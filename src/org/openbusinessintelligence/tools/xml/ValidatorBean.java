@@ -1,8 +1,8 @@
+package org.openbusinessintelligence.tools.xml;
 /**
  * Validate an XML file or a given XML string
  * @author marangon
  */
-package org.openbusinessintelligence.tools.xml;
 
 import java.io.*;
 import javax.xml.validation.*;

@@ -5,7 +5,6 @@ import java.io.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 
-import org.openbusinessintelligence.tools.toad.ToadProjectFileCreator;
 import org.slf4j.LoggerFactory;
 
 /**

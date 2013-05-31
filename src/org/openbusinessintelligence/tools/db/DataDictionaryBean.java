@@ -8,7 +8,6 @@ import javax.naming.*;
 import javax.sql.*;
 import javax.xml.parsers.*;
 
-import org.openbusinessintelligence.tools.cmd.ExecuteBean;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.*;
 
@@ -239,7 +238,7 @@ public class DataDictionaryBean {
     }
     
     // Column definition methods
-    public String dedebugColumn(
+    public String defineColumn(
     		String dbProduct,
     		String colType,
     		int colSize,
@@ -297,7 +296,7 @@ public class DataDictionaryBean {
     }
     
     // Get definition string for column
-    public String dedebugOriginalColumn(
+    public String defineOriginalColumn(
     		String colType,
     		int colSize,
     		int colPrecision,
@@ -348,14 +347,14 @@ public class DataDictionaryBean {
 	        		}
 	        	}
         	}
-           	sourceColumnDefinitions[i - 1] = dedebugColumn(
+           	sourceColumnDefinitions[i - 1] = defineColumn(
            		sourceCon.getMetaData().getDatabaseProductName(),
            		rsmd.getColumnTypeName(i),
            		rsmd.getColumnDisplaySize(i),
            		rsmd.getPrecision(i),
            		rsmd.getScale(i)
            	);
-           	sourceColumnOriginalDefinitions[i - 1] = dedebugOriginalColumn(
+           	sourceColumnOriginalDefinitions[i - 1] = defineOriginalColumn(
                		rsmd.getColumnTypeName(i),
                		rsmd.getColumnDisplaySize(i),
                		rsmd.getPrecision(i),

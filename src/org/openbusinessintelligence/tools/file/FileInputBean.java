@@ -14,7 +14,6 @@ package org.openbusinessintelligence.tools.file;
 
 import java.io.*;
 
-import org.openbusinessintelligence.tools.db.TableCopyBean;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -88,8 +87,10 @@ public class FileInputBean {
 		}
 		catch (Exception e) {
 			logger.error("File IO error:\n" + e.getMessage());
+			bufferedReader.close();
 			throw e;
 		}
+		bufferedReader.close();
 		return fileContent;
 	}
 	

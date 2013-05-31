@@ -63,7 +63,7 @@ public class FileMergeBean {
         	logger.info("Reading entries in zip file " + inputZipFile);
     		
     		ZipFile zipFile = new ZipFile(inputZipFile);
-    		Enumeration entries = zipFile.entries();
+    		Enumeration<? extends ZipEntry> entries = zipFile.entries();
     		
     		while(entries.hasMoreElements()) {
     			ZipEntry entry = (ZipEntry)entries.nextElement();
@@ -88,6 +88,7 @@ public class FileMergeBean {
     				logger.info("ENTRY " + entry.getName() + " IMPORTED");
     			}
     		}
+    		zipFile.close();
     		
         	logger.info("ZIP FILE " + inputZipFile + " COMPLETED");
     	}

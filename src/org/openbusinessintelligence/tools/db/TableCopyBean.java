@@ -225,7 +225,7 @@ public class TableCopyBean {
         	ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + targetName.toLowerCase());
         	
         	targetCon = ds.getConnection();
-        	logger.debug("Connected to database " + sourceName);
+        	logger.debug("Connected to database " + targetName);
         }
         
     	logger.info("Opened target connection");

@@ -4,7 +4,6 @@ import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-import org.openbusinessintelligence.tools.ldap.DirectoryCopyBean;
 import org.slf4j.LoggerFactory;
 
 

@@ -129,7 +129,7 @@ public class ImportCsvSeriesBean {
     		
     		// Loop on zip entries
     		ZipFile zipFile = new ZipFile(sourceZipFile);    		
-    		Enumeration entries = zipFile.entries();
+    		Enumeration<? extends ZipEntry> entries = zipFile.entries();
     		
     		int i = 0;
     		while(entries.hasMoreElements()) {
@@ -158,6 +158,7 @@ public class ImportCsvSeriesBean {
     				logger.info("ENTRY " + entry.getName() + " IMPORTED");
     			}
     		}
+    		zipFile.close();
     		
         	logger.info("ZIP FILE " + sourceZipFile + " COMPLETED");
     	}
