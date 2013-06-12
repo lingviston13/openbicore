@@ -8,10 +8,9 @@ import javax.naming.InitialContext;
 import javax.sql.DataSource;
 import org.slf4j.LoggerFactory;
 
-
 public class TableCreateBean {
 
-	static final org.slf4j.Logger logger = LoggerFactory.getLogger(TableCopyBean.class);
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(TableCreateBean.class);
 
     // Target properties
     private String targetPropertyFile = "";
@@ -23,6 +22,7 @@ public class TableCreateBean {
     private String targetCatalog = "";
     private String targetSchema = "";
     private String targetTable = "";
+    private String[] targetColumns = null;
     private String[] targetColumnDefinitions = null;
     
     // Options
@@ -36,7 +36,6 @@ public class TableCreateBean {
     public TableCreateBean() {
         super();
     }
-        
     
     // Set target properties methods
     public void setTargetPropertyFile(String property) {
@@ -76,6 +75,10 @@ public class TableCreateBean {
     }
 
     public void setTargetColumns(String[] property) {
+    	targetColumns = property;
+    }
+
+    public void setTargetColumnDefinitions(String[] property) {
     	targetColumnDefinitions = property;
     }
 
@@ -114,7 +117,7 @@ public class TableCreateBean {
     	
     }
     
-    private void createTable() throws Exception {
+    public void createTable() throws Exception {
     	logger.info("########################################");
     	logger.info("CREATING TABLE");
     	
@@ -126,9 +129,9 @@ public class TableCreateBean {
     	
     	openTargetConnection();
     	DatabaseMetaData dbmd = targetCon.getMetaData();
-    	currentCatalog = targetCon.getCatalog();
-    	currentSchema = targetCon.getSchema();
-    	ResultSet tables = dbmd.getTables(currentCatalog, currentSchema, targetTable, null);
+    	//currentCatalog = targetCon.getCatalog();
+    	//currentSchema = targetCon.getSchema();
+    	ResultSet tables = dbmd.getTables(null, null, targetTable, null);
     	while(tables.next()) {
     		if (tables.getString(3).equals(targetTable)) {
     			tableExistsFlag = true;
@@ -150,16 +153,18 @@ public class TableCreateBean {
     	else if (tableExistsFlag == false) {
     	
     		// create table    	
-	       	sqlText = "CREATE TABLE " + targetTable;
+	       	sqlText = "CREATE TABLE " + targetTable + "(";
 	       	for (int i = 0; i < targetColumnDefinitions.length; i++) {
 		    	if (i > 0) {
 		    		sqlText += ",";
 		    	}
-	       		sqlText += targetColumnDefinitions[i];
+	       		sqlText += targetColumns[i] + " " + targetColumnDefinitions[i];
 	       	}
+	       	sqlText += ")";
 	
 	       	// Execute prepared statement
 	        PreparedStatement targetStmt;
+	        logger.info("Creation statement:\n" + sqlText);
 	    	targetStmt = targetCon.prepareStatement(sqlText);
 	    	targetStmt.executeUpdate();
 	    	targetStmt.close();

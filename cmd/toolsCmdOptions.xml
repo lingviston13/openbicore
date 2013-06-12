@@ -299,6 +299,11 @@
 		<argName>target table</argName>
 	</option>
 	<option>
+		<name>trgcreate</name>
+		<description>Create Target Table</description>
+		<argName>create target table</argName>
+	</option>
+	<option>
 		<name>trgpreservedata</name>
 		<description>Preserve Target Data</description>
 		<argName>target preserve data</argName>

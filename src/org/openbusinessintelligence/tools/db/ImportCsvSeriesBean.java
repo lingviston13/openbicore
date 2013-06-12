@@ -98,20 +98,20 @@ public class ImportCsvSeriesBean {
     // Import a series of zip files
     public void importCsvSeries() throws Exception {
     	
-		org.openbusinessintelligence.tools.db.TableCopyBean tableCopy = new org.openbusinessintelligence.tools.db.TableCopyBean();
+		org.openbusinessintelligence.tools.db.DataCopyBean dataCopy = new org.openbusinessintelligence.tools.db.DataCopyBean();
 
-		tableCopy.setSourcePropertyFile(sourcePropertyFile);
-		tableCopy.setSourceDatabaseDriver(sourceDatabaseDriver);
-		tableCopy.setSourceUserName("");
-		tableCopy.setSourcePassWord("");
+		dataCopy.setSourcePropertyFile(sourcePropertyFile);
+		dataCopy.setSourceDatabaseDriver(sourceDatabaseDriver);
+		dataCopy.setSourceUserName("");
+		dataCopy.setSourcePassWord("");
 
-		tableCopy.setTargetPropertyFile(targetPropertyFile);
-		tableCopy.setTargetDatabaseDriver(targetDatabaseDriver);
-		tableCopy.setTargetConnectionURL(targetConnectionURL);
-		tableCopy.setTargetUserName(targetUserName);
-		tableCopy.setTargetPassWord(targetPassWord);
-		tableCopy.setTargetTable(targetTable);		
-		tableCopy.setPreserveDataOption(true);
+		dataCopy.setTargetPropertyFile(targetPropertyFile);
+		dataCopy.setTargetDatabaseDriver(targetDatabaseDriver);
+		dataCopy.setTargetConnectionURL(targetConnectionURL);
+		dataCopy.setTargetUserName(targetUserName);
+		dataCopy.setTargetPassWord(targetPassWord);
+		dataCopy.setTargetTable(targetTable);		
+		dataCopy.setPreserveDataOption(true);
 		
 		String[] fileNameCol = new String[1];
 		String[] fileNameValue = new String[1];
@@ -120,12 +120,12 @@ public class ImportCsvSeriesBean {
 			fileNameCol[0] = fileNameColumn;
 		}
 		
-		tableCopy.setCommitFrequency(commitFrequency);
+		dataCopy.setCommitFrequency(commitFrequency);
     	
     	if (!(sourceZipFile == null || sourceZipFile.equals("")) ) {
     		
         	logger.info("LOADING ENTRIES IN ZIP FILE " + sourceZipFile);
-    		tableCopy.setSourceConnectionURL("jdbc:relique:csv:zip:" + sourceZipFile);
+        	dataCopy.setSourceConnectionURL("jdbc:relique:csv:zip:" + sourceZipFile);
     		
     		// Loop on zip entries
     		ZipFile zipFile = new ZipFile(sourceZipFile);    		
@@ -138,22 +138,22 @@ public class ImportCsvSeriesBean {
     				
     				logger.info("IMPORTING ENTRY " + entry.getName());
     				
-            		tableCopy.setSourceQuery("SELECT * FROM " + entry.getName() + " WHERE " + sourceWhereClause);
+    				dataCopy.setSourceQuery("SELECT * FROM " + entry.getName() + " WHERE " + sourceWhereClause);
             		
             		if (i == 0) {
             			if (!(fileNameColumn == null || fileNameColumn.equals("")) ) {
-            				tableCopy.setTargetDefaultColumns(fileNameCol);
+            				dataCopy.setTargetDefaultColumns(fileNameCol);
             			}
-	            		tableCopy.retrieveColumnList();
+            			dataCopy.retrieveColumnList();
             		}
 
             		if (!(fileNameColumn == null || fileNameColumn.equals("")) ) {
 	            		fileNameValue[0] = entry.getName();
-	            		tableCopy.setTargetDefaultValues(fileNameValue);
+	            		dataCopy.setTargetDefaultValues(fileNameValue);
 	            	}
             		
-        			tableCopy.executeSelect();
-        			tableCopy.executeInsert();
+            		dataCopy.executeSelect();
+            		dataCopy.executeInsert();
         			i += 1;
     				logger.info("ENTRY " + entry.getName() + " IMPORTED");
     			}

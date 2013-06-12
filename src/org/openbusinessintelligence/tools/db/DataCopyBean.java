@@ -15,9 +15,9 @@ import org.w3c.dom.*;
  * Class for replication of database tables between databases
  * @author Nicola Marangoni
  */
-public class TableCopyBean {
+public class DataCopyBean {
 
-	static final org.slf4j.Logger logger = LoggerFactory.getLogger(TableCopyBean.class);
+	static final org.slf4j.Logger logger = LoggerFactory.getLogger(DataCopyBean.class);
 
     // Declarations of bean properties
 	// Source properties
@@ -61,7 +61,7 @@ public class TableCopyBean {
     private PreparedStatement sourceStmt= null;
     
     // Constructor
-    public TableCopyBean() {
+    public DataCopyBean() {
         super();
     }
 
@@ -232,6 +232,7 @@ public class TableCopyBean {
     	
     }
     
+    // Get columns for a given connection and a given SQL text
     private String[] retrieveColumns(Connection con, String sqlText) throws Exception {
 
     	String[] columns = null;
@@ -250,6 +251,7 @@ public class TableCopyBean {
     	return columns;
     }
 
+    // Get list of common source/target columns
     public void retrieveColumnList() throws Exception {
     	logger.info("########################################");
     	logger.info("RETRIEVING COLUMN LIST...");
@@ -333,6 +335,7 @@ public class TableCopyBean {
     }
 
     // Execution methods
+    // Perform select on source
     public void executeSelect() throws Exception {
     	logger.info("########################################");
     	logger.info("GETTING DATA");
@@ -373,6 +376,7 @@ public class TableCopyBean {
         logger.info("########################################");
     }
 
+    // Loop on source records and perform inserts
     public void executeInsert() throws Exception {
         logger.info("########################################");
     	logger.info("INSERTING DATA...");

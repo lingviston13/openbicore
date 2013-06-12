@@ -52,10 +52,22 @@ public class DataDictionaryBean {
     private Properties targetProperties = null;
     private Connection sourceCon = null;
     private Connection targetCon = null;
+    //
     private String[] sourceColumnNames = null;
+    private String[] sourceColumnType = null;
+    private int[] sourceColumnLength = null;
+    private int[] sourceColumnPrecision = null;
+    private int[] sourceColumnScale = null;
     private String[] sourceColumnDefinitions = null;
-    private String[] sourceColumnOriginalDefinitions = null;
-    private int[] sourceColumnPkPositions = null;
+    //
+    private String[] targetColumnNames = null;
+    private String[] targetColumnType = null;
+    private int[] targetColumnLength = null;
+    private int[] targetColumnPrecision = null;
+    private int[] targetColumnScale = null;
+    private String[] targetColumnDefinitions = null;
+    
+    private int[] columnPkPositions = null;
     
     // Constructor
     public DataDictionaryBean() {
@@ -158,12 +170,16 @@ public class DataDictionaryBean {
     	return sourceColumnDefinitions;
     }
     
-    public String[] getSourceColumnOriginalDefinitions() {
-    	return sourceColumnOriginalDefinitions;
+    public String[] getTargetColumnNames() {
+    	return targetColumnNames;
+    }
+    
+    public String[] getTargetColumnDefinitions() {
+    	return targetColumnDefinitions;
     }
     
     public int[] getSourceColumnPkPositions() {
-    	return sourceColumnPkPositions;
+    	return columnPkPositions;
     }
     
     
@@ -237,87 +253,12 @@ public class DataDictionaryBean {
     	
     }
     
-    // Column definition methods
-    public String defineColumn(
-    		String dbProduct,
-    		String colType,
-    		int colSize,
-    		int colPrecision,
-    		int colScale
-    ) {
-    	
-    	String colDefinition = "";
-    	
-    	if (
-    			dbProduct.equalsIgnoreCase("Informix Dynamic Server") &&
-    			(
-    					colType.toUpperCase().contains("INT") ||
-    					colType.toUpperCase().contains("SERIAL")
-    			)
-    	) {
-    		colDefinition = "NUMBER (" + (colSize - 1) + ")";
-    	}
-    	else if (colType.toUpperCase().contains("CHAR") && colSize > 1) {
-    		if (colSize > 4000) {
-    			colSize = 4000;
-    		}
-       		colDefinition = "VARCHAR2 (" + colSize + ")";
-       	}
-       	else if (colType.toUpperCase().contains("CHAR") && colSize == 1) {
-       		colDefinition = "CHAR (1)";
-       	}
-       	else if (
-       			colType.toUpperCase().contains("NUM") ||
-       			colType.toUpperCase().contains("BIN") ||
-       			colType.toUpperCase().contains("DEC") ||
-       			colType.toUpperCase().contains("INT") ||
-       			colType.toUpperCase().contains("DOU") ||
-       			colType.toUpperCase().contains("FLO")
-       	) {
-       		if (colPrecision<=colScale) {
-       			colDefinition = "FLOAT";
-       		}
-       		else {
-           		colDefinition = "NUMBER (" + colPrecision + "," + colScale + ")";
-       			
-       		}    		
-       	}
-       	else if (
-       			colType.toUpperCase().contains("DATE") ||
-       			colType.toUpperCase().contains("TIME")
-       	) {
-       		colDefinition = "DATE";      		
-       	}
-       	else {
-       		colDefinition = colType.toUpperCase();
-       	}
-
-       	return colDefinition;
-    }
-    
-    // Get definition string for column
-    public String defineOriginalColumn(
-    		String colType,
-    		int colSize,
-    		int colPrecision,
-    		int colScale
-    ) {
-    	
-    	String colDefinition = colType.toUpperCase();
-    	
-    	if (colPrecision > 0) {
-    		colDefinition += "(" + colPrecision + "," + colScale + ")";
-    	}
-    	else if (colSize > 0) {
-    		colDefinition += "(" + colSize + ")";
-    	}
-
-       	return colDefinition;
-    }
-    
     // Main methods    
     public void retrieveColumns() throws Exception {
 
+    	String sourceProductName;
+    	String targetProductName;
+    	
     	String sqlText;
        	if (sourceQuery == null || sourceQuery.equals("")) {
        		sqlText = "SELECT * FROM " + sourceTable;
@@ -329,47 +270,147 @@ public class DataDictionaryBean {
        	logger.info("SQL: " + sqlText + ": getting columns...");
         
        	openSourceConnection();
+       	sourceProductName = sourceCon.getMetaData().getDatabaseProductName();
         PreparedStatement columnStmt = sourceCon.prepareStatement(sqlText);
         ResultSet rs = columnStmt.executeQuery();
         ResultSetMetaData rsmd = rs.getMetaData();
 
         sourceColumnNames = new String[rsmd.getColumnCount()];
+        sourceColumnType = new String[rsmd.getColumnCount()];
+        sourceColumnLength = new int[rsmd.getColumnCount()];
+        sourceColumnPrecision = new int[rsmd.getColumnCount()];
+        sourceColumnScale = new int[rsmd.getColumnCount()];
+        sourceColumnDefinitions = null;
         sourceColumnDefinitions = new String[rsmd.getColumnCount()];
-        sourceColumnOriginalDefinitions = new String[rsmd.getColumnCount()];
-        sourceColumnPkPositions = new int[rsmd.getColumnCount()];
+        //
+        targetColumnNames = new String[rsmd.getColumnCount()];
+        targetColumnType = new String[rsmd.getColumnCount()];
+        targetColumnLength = new int[rsmd.getColumnCount()];
+        targetColumnPrecision = new int[rsmd.getColumnCount()];
+        targetColumnScale = new int[rsmd.getColumnCount()];
+        targetColumnDefinitions = new String[rsmd.getColumnCount()];
+        columnPkPositions = new int[rsmd.getColumnCount()];
+        
+        openTargetConnection();
+        targetProductName = targetCon.getMetaData().getDatabaseProductName();
+        
+        logger.info("Source RDBMS product: " + sourceProductName);
+        logger.info("Targer RDBMS product: " + targetProductName);
         
        	for (int i = 1; i <= rsmd.getColumnCount(); i++) {
         	sourceColumnNames[i - 1] = rsmd.getColumnName(i).toUpperCase();
+        	targetColumnNames[i - 1] = sourceColumnNames[i - 1];
         	if (sourceMapColumns != null) {
 	        	for (int mc = 0; mc < sourceMapColumns.length; mc++) {
 	        		if (sourceMapColumns[mc].equalsIgnoreCase(sourceColumnNames[i - 1])) {
 	        			sourceColumnNames[i - 1] = targetMapColumns[mc];
+	        			targetColumnNames[i - 1] = targetMapColumns[mc];
 	        		}
 	        	}
         	}
-           	sourceColumnDefinitions[i - 1] = defineColumn(
-           		sourceCon.getMetaData().getDatabaseProductName(),
-           		rsmd.getColumnTypeName(i),
-           		rsmd.getColumnDisplaySize(i),
-           		rsmd.getPrecision(i),
-           		rsmd.getScale(i)
-           	);
-           	sourceColumnOriginalDefinitions[i - 1] = defineOriginalColumn(
-               		rsmd.getColumnTypeName(i),
-               		rsmd.getColumnDisplaySize(i),
-               		rsmd.getPrecision(i),
-               		rsmd.getScale(i)
-            );
-           	logger.info("FOUND COLUMN Position: " + (i) + "  Name: " + sourceColumnNames[i - 1] + "  Definition: " + sourceColumnDefinitions[i - 1]);
+
+        	//*******************************
+        	// set source column properties
+        	sourceColumnType[i - 1] = rsmd.getColumnTypeName(i).toUpperCase();
+        	sourceColumnLength[i - 1] = rsmd.getColumnDisplaySize(i);
+        	sourceColumnPrecision[i - 1] = rsmd.getPrecision(i);
+        	sourceColumnScale[i - 1] = rsmd.getScale(i);
+        	sourceColumnDefinitions[i - 1] = sourceColumnType[i - 1];
+        	// Column definition
+        	if (sourceColumnPrecision[i - 1] > 0) {
+        		sourceColumnDefinitions[i - 1] += "(" + sourceColumnPrecision[i - 1] + "," + sourceColumnScale[i - 1] + ")";
+        	}
+        	else if (sourceColumnLength[i - 1] > 0) {
+        		sourceColumnDefinitions[i - 1] += "(" + sourceColumnLength[i - 1] + ")";
+        	}
+
+        	//*******************************
+        	// set target column properties
+        	if (sourceColumnType[i - 1].contains("CHAR") && sourceColumnLength[i - 1] == 1) {
+           		targetColumnType[i - 1] = "CHAR (1)";
+           	}
+        	else if (sourceColumnType[i - 1].contains("CHAR") && sourceColumnLength[i - 1] > 1) {
+        		if (targetProductName.toUpperCase().contains("ORACLE")) {
+            		if (sourceColumnLength[i - 1] > 4000) {
+            			targetColumnType[i - 1] = "CLOB";
+            		}
+            		else {
+            			targetColumnType[i - 1] = "VARCHAR2";
+            			targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+            		}
+        		}
+	        	else {
+        			targetColumnType[i - 1] = "VARCHAR";
+        			if (targetProductName.toUpperCase().contains("MICROSOFT") && (sourceColumnLength[i - 1] > 8000)) {
+        				targetColumnLength[i - 1] = -1;
+        			}
+        			else {
+        				targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+        			}
+	        	}
+           	}
+           	else if (
+           			sourceColumnType[i - 1].contains("DATE") ||
+           			sourceColumnType[i - 1].contains("TIME")
+           	) {
+           		if (targetProductName.toUpperCase().contains("ORACLE")) {
+               		targetColumnType[i - 1] = "DATE";
+           		}
+           		else {
+           			targetColumnType[i - 1] = "DATETIME";
+           		}
+           	}
+           	else if (
+           			sourceColumnType[i - 1].contains("NUM") ||
+           			sourceColumnType[i - 1].contains("BIN") ||
+           			sourceColumnType[i - 1].contains("DEC") ||
+           			sourceColumnType[i - 1].contains("INT") ||
+           			sourceColumnType[i - 1].contains("DOU") ||
+           			sourceColumnType[i - 1].contains("FLO")
+           	) {
+           		if (sourceColumnPrecision[i - 1] <= sourceColumnScale[i - 1]) {
+           			targetColumnType[i - 1] = "FLOAT";
+           		}
+           		else {
+           			if (targetProductName.toUpperCase().contains("ORACLE")) {
+           				targetColumnType[i - 1] = "NUMBER";           				
+           			}
+           			else {
+           				targetColumnType[i - 1] = "NUMERIC";
+           			}
+           		}    		
+           	}
+        	// Column definition
+        	targetColumnDefinitions[i - 1] = targetColumnType[i - 1];
+        	if (targetColumnPrecision[i - 1] > 0) {
+        		targetColumnDefinitions[i - 1] += "(" + targetColumnPrecision[i - 1] + "," +targetColumnScale[i - 1] + ")";
+        	}
+        	else if (targetColumnLength[i - 1] != 0) {
+        		logger.info(targetColumnNames[i - 1] + " " +  String.valueOf(targetColumnLength[i - 1]));
+        		if (targetColumnLength[i - 1]==-1) {
+        			targetColumnDefinitions[i - 1] += "(max)";
+        		}
+        		else {
+        			targetColumnDefinitions[i - 1] += "(" + targetColumnLength[i - 1] + ")";
+        		}
+        	}
+        	
+           	logger.info("FOUND COLUMN Position: " + (i) + "  Name: " + sourceColumnNames[i - 1] + "  Definition: " + targetColumnDefinitions[i - 1]);
        	}
         rs.close();
         columnStmt.close();
-        ResultSet rspk = sourceCon.getMetaData().getPrimaryKeys(null, null, sourceTable.split("\\.")[sourceTable.split("\\.").length-1]);
+    	logger.info(String.valueOf(sourceTable.split("\\.").length));
+        String schema = null;
+        if (sourceTable.split("\\.").length==2) {
+        	schema = sourceTable.split("\\.")[0];
+        	logger.info(schema);
+        }
+        ResultSet rspk = sourceCon.getMetaData().getPrimaryKeys(schema, schema, sourceTable.split("\\.")[sourceTable.split("\\.").length-1]);
         while (rspk.next()) {
         	logger.info("PRIMARY KEY Position: " + rspk.getObject("KEY_SEQ") + " Column: " + rspk.getObject("COLUMN_NAME"));
          	for (int i = 0; i < sourceColumnNames.length; i++) {
          		if (sourceColumnNames[i].equalsIgnoreCase(rspk.getString("COLUMN_NAME"))) {
-         			sourceColumnPkPositions[i] = rspk.getInt("KEY_SEQ");
+         			columnPkPositions[i] = rspk.getInt("KEY_SEQ");
          		}
            	}
         }
@@ -422,49 +463,5 @@ public class DataDictionaryBean {
  			}
 		}
     	logger.info("LOADED MAP DEFINITION FILE");
-    }
-
-    // Insert column definition in the given table
-    public void executeInsert() throws Exception {
-        logger.info("########################################");
-    	logger.info("INSERTING DATA...");
-
-    	String insertText;
-    	openTargetConnection();    	
-        PreparedStatement targetStmt;
-        insertText = "DELETE " + targetTable;
-	    logger.info(insertText);
-       	targetStmt = targetCon.prepareStatement(insertText);
-        targetStmt.executeUpdate();
-        targetStmt.close();
-	    logger.info("Rows deleted");
-        insertText = "INSERT /*+APPEND*/ INTO " + targetTable +"(" + targetColumns + ") VALUES (?,?,?,?)";
-	    
-	    logger.info(insertText);
-	    logger.debug("Statement prepared");
-	    
-	    int rowCount = 0;
-	    
-	    for (int i=0; i<sourceColumnNames.length; i++) {
-	    	targetStmt = targetCon.prepareStatement(insertText);
-	    	targetStmt.setObject(1, i+1);
-	    	targetStmt.setObject(2, sourceColumnNames[i]);
-	    	targetStmt.setObject(3, sourceColumnDefinitions[i]);
-	    	if (sourceColumnPkPositions[i]>0) {
-		    	targetStmt.setObject(4, sourceColumnPkPositions[i]);
-	    	}
-	    	else {
-	    		targetStmt.setObject(4, null);
-	    	}
-		    targetStmt.executeUpdate();
-		    targetStmt.close();
-		    rowCount++;
-	    }
-        targetCon.commit();
-	    targetCon.close();
-
-	    logger.info(rowCount + " rows totally inserted");
-	    logger.info(rowCount + " INSERT COMPLETED");
-	    logger.info("########################################");
     }
 }

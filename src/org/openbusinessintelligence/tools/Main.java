@@ -181,43 +181,76 @@ public class Main {
 				}
 	    	}
 	    	if (function.equalsIgnoreCase("tablecopy")) {
-	    		// Copy the content of a source rdbms table into another rdbms table 
-				org.openbusinessintelligence.tools.db.TableCopyBean tableCopy = new org.openbusinessintelligence.tools.db.TableCopyBean();
-
-				tableCopy.setSourcePropertyFile(getOption("srcconnaddpropertyfile"));
-				tableCopy.setSourceDatabaseDriver(getOption("srcdbdriverclass"));
-				tableCopy.setSourceConnectionURL(getOption("srcdbconnectionurl"));
-				tableCopy.setSourceUserName(getOption("srcdbusername"));
-				tableCopy.setSourcePassWord(getOption("srcdbpassword"));
-				tableCopy.setSourceTable(getOption("sourcetable"));
-				tableCopy.setSourceQuery(getOption("sourcequery"));
-				
-				tableCopy.setTargetPropertyFile(getOption("trgconnaddpropertyfile"));
-				tableCopy.setTargetDatabaseDriver(getOption("trgdbdriverclass"));
-				tableCopy.setTargetConnectionURL(getOption("trgdbconnectionurl"));
-				tableCopy.setTargetUserName(getOption("trgdbusername"));
-				tableCopy.setTargetPassWord(getOption("trgdbpassword"));
-				tableCopy.setTargetTable(getOption("targettable"));
-				tableCopy.setPreserveDataOption(Boolean.parseBoolean(getOption("trgpreservedata")));
-				
-				String mappingDefFile = getOption("mapdeffile");
-				tableCopy.setMappingDefFile(mappingDefFile);
-				
-				if (getOption("commitfrequency") != null) {
-					tableCopy.setCommitFrequency(Integer.parseInt(getOption("commitfrequency")));
-				}
 				
 				try {
 					if (Boolean.parseBoolean(getOption("trgcreate"))) {
+						// Get source dictionary
+			    		org.openbusinessintelligence.tools.db.DataDictionaryBean dictionaryBean = new org.openbusinessintelligence.tools.db.DataDictionaryBean();
+			    		dictionaryBean.setSourcePropertyFile(getOption("srcconnaddpropertyfile"));
+			    		dictionaryBean.setSourceDatabaseDriver(getOption("srcdbdriverclass"));
+			    		dictionaryBean.setSourceConnectionURL(getOption("srcdbconnectionurl"));
+			    		dictionaryBean.setSourceUserName(getOption("srcdbusername"));
+			    		dictionaryBean.setSourcePassWord(getOption("srcdbpassword"));
+			    		dictionaryBean.setSourceTable(getOption("sourcetable"));
+			    		dictionaryBean.setSourceQuery(getOption("sourcequery"));
+			    		//
+			    		dictionaryBean.setTargetPropertyFile(getOption("trgconnaddpropertyfile"));
+			    		dictionaryBean.setTargetDatabaseDriver(getOption("trgdbdriverclass"));
+			    		dictionaryBean.setTargetConnectionURL(getOption("trgdbconnectionurl"));
+			    		dictionaryBean.setTargetUserName(getOption("trgdbusername"));
+			    		dictionaryBean.setTargetPassWord(getOption("trgdbpassword"));
+			    		dictionaryBean.setTargetTable(getOption("targettable"));
+			    		//
+			    		dictionaryBean.retrieveColumns();
+			    		String[] columns = dictionaryBean.getTargetColumnNames();
+			    		String[] columnDefs = dictionaryBean.getTargetColumnDefinitions();
+
+			    		// Create a table basing on the result
+			    		org.openbusinessintelligence.tools.db.TableCreateBean tableCreate = new org.openbusinessintelligence.tools.db.TableCreateBean();
 						
+						tableCreate.setTargetPropertyFile(getOption("trgconnaddpropertyfile"));
+			    		tableCreate.setTargetDatabaseDriver(getOption("trgdbdriverclass"));
+			    		tableCreate.setTargetConnectionURL(getOption("trgdbconnectionurl"));
+			    		tableCreate.setTargetUserName(getOption("trgdbusername"));
+			    		tableCreate.setTargetPassWord(getOption("trgdbpassword"));
+			    		tableCreate.setTargetTable(getOption("targettable"));
+
+			    		tableCreate.setTargetColumns(columns);
+			    		tableCreate.setTargetColumnDefinitions(columnDefs);
+			    		tableCreate.createTable();
 					}
 					
-					if (mappingDefFile!=null) {
-						tableCopy.retrieveMappingDefinition();
+		    		// Copy the content of a source sql query into a target rdbms table
+					org.openbusinessintelligence.tools.db.DataCopyBean dataCopy = new org.openbusinessintelligence.tools.db.DataCopyBean();
+
+					dataCopy.setSourcePropertyFile(getOption("srcconnaddpropertyfile"));
+					dataCopy.setSourceDatabaseDriver(getOption("srcdbdriverclass"));
+					dataCopy.setSourceConnectionURL(getOption("srcdbconnectionurl"));
+					dataCopy.setSourceUserName(getOption("srcdbusername"));
+					dataCopy.setSourcePassWord(getOption("srcdbpassword"));
+					dataCopy.setSourceTable(getOption("sourcetable"));
+					dataCopy.setSourceQuery(getOption("sourcequery"));
+					
+					dataCopy.setTargetPropertyFile(getOption("trgconnaddpropertyfile"));
+					dataCopy.setTargetDatabaseDriver(getOption("trgdbdriverclass"));
+					dataCopy.setTargetConnectionURL(getOption("trgdbconnectionurl"));
+					dataCopy.setTargetUserName(getOption("trgdbusername"));
+					dataCopy.setTargetPassWord(getOption("trgdbpassword"));
+					dataCopy.setTargetTable(getOption("targettable"));
+					dataCopy.setPreserveDataOption(Boolean.parseBoolean(getOption("trgpreservedata")));
+					
+					String mappingDefFile = getOption("mapdeffile");
+					dataCopy.setMappingDefFile(mappingDefFile);
+					
+					if (getOption("commitfrequency") != null) {
+						dataCopy.setCommitFrequency(Integer.parseInt(getOption("commitfrequency")));
 					}
-					tableCopy.retrieveColumnList();
-					tableCopy.executeSelect();
-					tableCopy.executeInsert();
+					if (mappingDefFile!=null) {
+						dataCopy.retrieveMappingDefinition();
+					}
+					dataCopy.retrieveColumnList();
+					dataCopy.executeSelect();
+					dataCopy.executeInsert();
 				}
 				catch (Exception e) {
 					logger.error("UNEXPECTED EXCEPTION");
@@ -254,7 +287,7 @@ public class Main {
 				    throw e;
 				}
 	    	}
-	    	if (function.equalsIgnoreCase("importdbdictionary")) {
+	    	/*if (function.equalsIgnoreCase("importdbdictionary")) {
 				org.openbusinessintelligence.tools.db.DataDictionaryBean dataDictionary = new org.openbusinessintelligence.tools.db.DataDictionaryBean();
 				
 				// Import dictionary information about a table or query into a target table
@@ -289,7 +322,7 @@ public class Main {
 					logger.error(e.getMessage());
 				    throw e;
 				}
-	    	}
+	    	}*/
 	    	if (function.equalsIgnoreCase("mergefiles")) {
 				org.openbusinessintelligence.tools.file.FileMergeBean fileMerge = new org.openbusinessintelligence.tools.file.FileMergeBean();
 				fileMerge.setInputZipFile(getOption("sourcezipfile"));
