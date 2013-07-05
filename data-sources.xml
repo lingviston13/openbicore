@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-sources>
+	<data-source id="oracle_thin-1371810243252--1764259699" provider="oracle" driver="oracle_thin" name="msas4042i_ora_dwhdev" create-date="1371810243252" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="msas4042i.msg.de" port="1521" server="" database="DWHDEV" url="jdbc:oracle:thin:@//msas4042i.msg.de:1521/DWHDEV" user="SYSTEM" password="HhcBchESF3bk" home="c:\oracle\product\11.2.0\dbhome_1" type="dev">
+			<property name="@dbeaver-sid-service@" value="SERVICE"/>
+			<property name="@dbeaver-driver-type@" value="THIN"/>
+			<property name="@dbeaver-connection-type@" value="BASIC"/>
+			<property name="@dbeaver-check-schema-content@" value="true"/>
+			<property name="@dbeaver-always-show-dba@" value="false"/>
+		</connection>
+	</data-source>
+	<data-source id="db2-1371810393460--1534090699" provider="generic" driver="db2" name="msas4042i_db2_sample" create-date="1371810393460" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="msas4042i.msg.de" port="50000" server="" database="SAMPLE" url="jdbc:db2://msas4042i.msg.de:50000/SAMPLE" user="admin_gbi" password="MSseKQ8RFEdUcuc=" type="dev">
+			<property name="progressiveStreaming" value="2"/>
+			<property name="fullyMaterializeInputStreams" value="true"/>
+			<property name="fullyMaterializeLobData" value="true"/>
+		</connection>
+	</data-source>
+	<data-source id="mssql_ms-1372237954736--1889990269" provider="generic" driver="mssql_ms" name="msgs469i_mss_informatica" create-date="1372237954736" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="msgs469i.msg.de" port="1433" server="" database="informatica" url="jdbc:sqlserver://msgs469i.msg.de:1433;databaseName=informatica" user="informatica" password="HhcBchESF3bk" type="dev"/>
+	</data-source>
+	<data-source id="db2-1372251943658--1845157647" provider="generic" driver="db2" name="msg469i_db2_sample" create-date="1372251943658" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="msgs469i.msg.de" port="50000" server="" database="sample" url="jdbc:db2://msgs469i.msg.de:50000/sample" user="dwhdev" password="HhcBchESF3bk" type="dev">
+			<property name="progressiveStreaming" value="2"/>
+			<property name="fullyMaterializeInputStreams" value="true"/>
+			<property name="fullyMaterializeLobData" value="true"/>
+		</connection>
+	</data-source>
+</data-sources>
