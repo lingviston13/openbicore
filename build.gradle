@@ -1,0 +1,39 @@
+apply plugin: 'application'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+version = '0.1'
+mainClassName = 'org.openbusinessintelligence.core.Main'
+
+repositories {
+    mavenCentral()
+    flatDir name: 'localRepository', dirs: 'C:/Program Files/Java/jdbc'
+}
+
+dependencies {
+    compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
+	compile fileTree(dir: 'D:/DEV/java/lib/common')
+	compile fileTree(dir: 'D:/DEV/java/lib/jdbc')
+    compile group: 'junit', name: 'junit', version: '4.+'
+	runtime fileTree(dir: 'D:/DEV/java/lib/common')
+	runtime fileTree(dir: 'D:/DEV/java/lib/jdbc')
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'Open BI Core', 'Implementation-Version': version, 'Main-Class': mainClassName
+	}
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}

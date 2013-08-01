@@ -34,7 +34,7 @@ public class Main {
 			cmd = parser.parse(cmdOptions, args);
 		}
 		catch(Exception e) {
-			logger.error("Unexpected exception:" + e.getMessage());
+			logger.error("Unexpected exception:" + e.toString());
 		    throw e;
 		}
 		
@@ -181,6 +181,7 @@ public class Main {
 				}
 	    	}
 	    	if (function.equalsIgnoreCase("dbproperties")) {
+				logger.info("Get database properties");
 	    		// Execute a store procedure
 	    		org.openbusinessintelligence.core.db.ConnectionBean connectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
 	    		connectionBean.setPropertyFile(getOption("connaddpropertyfile"));
@@ -195,12 +196,13 @@ public class Main {
 				catch (Exception e) {
 					logger.error("UNEXPECTED EXCEPTION");
 					logger.error(e.getMessage());
-					connectionBean.closeConnection();
 				    throw e;
 				}
 				connectionBean.closeConnection();
+				logger.info("Properties retrieved");
 	    	}
 	    	if (function.equalsIgnoreCase("tablecopy")) {
+				logger.info("Copy all tables of a schema, a single table or the result of a query from a database to another");
 				
 	    		org.openbusinessintelligence.core.db.ConnectionBean sourceConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
 	    		sourceConnectionBean.setPropertyFile(getOption("srcconnaddpropertyfile"));
@@ -218,51 +220,92 @@ public class Main {
 	    		targetConnectionBean.setPassWord(getOption("trgdbpassword"));
 	    		targetConnectionBean.openConnection();
 	    		
+				logger.info("Source and target connections prepared");
+				
+	    		String sourceSchema = getOption("sourceschema");
+	    		logger.info("Source schema: " + sourceSchema);
+	    		String sourceTable = getOption("sourcetable");
+	    		logger.info("Source table: " + sourceTable);
+	    		String sourceQuery = getOption("sourcequery");
+	    		logger.info("Source query: " + sourceQuery);
+	    		String targetSchema = getOption("targetschema");
+	    		logger.info("Target schema: " + targetSchema);
+	    		String targetTable = getOption("targettable");
+	    		logger.info("Target table: " + targetTable);
+	    		String[] sourceTableList = null;
+	    		String[] targetTableList = null;
+
+				sourceConnectionBean.setSchemaName(sourceSchema);
+	    		if ((sourceSchema != null) &&
+	    			(sourceTable == null || sourceSchema.equals("")) &&
+	    			(sourceQuery == null || sourceSchema.equals(""))
+	    		) {
+					logger.info("Copy all objects of a schema");
+					sourceTableList = sourceConnectionBean.getTableList();
+					targetTableList = sourceTableList;
+	    		}
+	    		else {
+					logger.info("Copy a single table or the result of a query");
+					sourceTableList = new String[1];
+					targetTableList = new String[1];
+					sourceTableList[0] = sourceTable;
+					targetTableList[0] = targetTable;
+	    		}
+	    		
 				try {
 					if (Boolean.parseBoolean(getOption("trgcreate"))) {
+						logger.info("Create tables if they don't exist");
 						// Get source dictionary
 			    		org.openbusinessintelligence.core.db.DataDictionaryBean dictionaryBean = new org.openbusinessintelligence.core.db.DataDictionaryBean();
-			    		dictionaryBean.setSourceConnection(sourceConnectionBean);
-			    		dictionaryBean.setSourceTable(getOption("sourcetable"));
-			    		dictionaryBean.setSourceQuery(getOption("sourcequery"));
-			    		//
-			    		dictionaryBean.setTargetConnection(targetConnectionBean);
-			    		//
-			    		dictionaryBean.retrieveColumns();
-			    		String[] columns = dictionaryBean.getTargetColumnNames();
-			    		String[] columnDefs = dictionaryBean.getTargetColumnDefinitions();
-
-			    		// Create a table basing on the result
 			    		org.openbusinessintelligence.core.db.TableCreateBean tableCreate = new org.openbusinessintelligence.core.db.TableCreateBean();
-			    		tableCreate.setTargetConnection(targetConnectionBean);
-			    		tableCreate.setTargetTable(getOption("targettable"));
-			    		tableCreate.setTargetColumns(columns);
-			    		tableCreate.setTargetColumnDefinitions(columnDefs);
-			    		tableCreate.createTable();
+			    		dictionaryBean.setSourceConnection(sourceConnectionBean);
+		    			for (int i = 0; i < sourceTableList.length; i++ ) {
+							logger.info("Creating table: " + sourceTableList[i]);
+				    		dictionaryBean.setSourceTable(sourceTableList[i]);
+				    		dictionaryBean.setSourceQuery(sourceQuery);
+				    		//
+				    		dictionaryBean.setTargetConnection(targetConnectionBean);
+				    		//
+				    		dictionaryBean.retrieveColumns();
+				    		String[] columns = dictionaryBean.getTargetColumnNames();
+				    		String[] columnDefs = dictionaryBean.getTargetColumnDefinitions();
+				    		// Create a table basing on the result
+				    		tableCreate.setTargetConnection(targetConnectionBean);
+				    		tableCreate.setTargetSchema(targetSchema);
+				    		tableCreate.setTargetTable(targetTableList[i]);
+				    		tableCreate.setTargetColumns(columns);
+				    		tableCreate.setTargetColumnDefinitions(columnDefs);
+				    		tableCreate.setDropIfExistsOption(Boolean.parseBoolean(getOption("dropifexists")));
+				    		tableCreate.createTable();
+		    			}
 					}
-					
-		    		// Copy the content of a source sql query into a target rdbms table
-					org.openbusinessintelligence.core.db.DataCopyBean dataCopy = new org.openbusinessintelligence.core.db.DataCopyBean();
-					dataCopy.setSourceConnection(sourceConnectionBean);
-					dataCopy.setSourceTable(getOption("sourcetable"));
-					dataCopy.setSourceQuery(getOption("sourcequery"));
-					
-					dataCopy.setTargetConnection(targetConnectionBean);
-					dataCopy.setTargetTable(getOption("targettable"));
-					dataCopy.setPreserveDataOption(Boolean.parseBoolean(getOption("trgpreservedata")));
-					
-					String mappingDefFile = getOption("mapdeffile");
-					dataCopy.setMappingDefFile(mappingDefFile);
-					
-					if (getOption("commitfrequency") != null) {
-						dataCopy.setCommitFrequency(Integer.parseInt(getOption("commitfrequency")));
-					}
-					if (mappingDefFile!=null) {
-						dataCopy.retrieveMappingDefinition();
-					}
-					dataCopy.retrieveColumnList();
-					dataCopy.executeSelect();
-					dataCopy.executeInsert();
+
+	    			for (int i = 0; i < targetTableList.length; i++ ) {
+			    		// Copy the content of a source sql query into a target rdbms table
+						logger.info("Feeding table: " + sourceTableList[i]);
+						org.openbusinessintelligence.core.db.DataCopyBean dataCopy = new org.openbusinessintelligence.core.db.DataCopyBean();
+						dataCopy.setSourceConnection(sourceConnectionBean);
+						dataCopy.setSourceTable(sourceTableList[i]);
+						dataCopy.setSourceQuery(sourceQuery);
+						
+						dataCopy.setTargetConnection(targetConnectionBean);
+						dataCopy.setTargetSchema(targetSchema);
+						dataCopy.setTargetTable(targetTableList[i]);
+						dataCopy.setPreserveDataOption(Boolean.parseBoolean(getOption("trgpreservedata")));
+						
+						String mappingDefFile = getOption("mapdeffile");
+						dataCopy.setMappingDefFile(mappingDefFile);
+						
+						if (getOption("commitfrequency") != null) {
+							dataCopy.setCommitFrequency(Integer.parseInt(getOption("commitfrequency")));
+						}
+						if (mappingDefFile!=null) {
+							dataCopy.retrieveMappingDefinition();
+						}
+						dataCopy.retrieveColumnList();
+						dataCopy.executeSelect();
+						dataCopy.executeInsert();
+	    			}
 					sourceConnectionBean.closeConnection();
 					targetConnectionBean.closeConnection();
 				}
@@ -393,6 +436,7 @@ public class Main {
 	
 	@SuppressWarnings("static-access")
 	private static void configureCmdOptions() throws Exception {
+		logger.info("Configure command line options");
 		
 		cmdOptions = new Options();		
 		Option option = new Option("help", "Print this message");
@@ -402,7 +446,7 @@ public class Main {
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			javax.xml.parsers.DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			optionsXML = docBuilder.parse("cmd/coreCmdOptions.xml");
+			optionsXML = docBuilder.parse(Main.class.getClassLoader().getResource("cmd/coreCmdOptions.xml").toString());
 			optionsXML.getDocumentElement().normalize();
 		}
 		catch(Exception e) {
@@ -422,6 +466,7 @@ public class Main {
  				cmdOptions.addOption(option);
 		   }
 		}
+		logger.info("Options configured");
 	}
 	
 	private static String getOption(String optionName) {

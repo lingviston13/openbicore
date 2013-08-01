@@ -52,6 +52,10 @@ public class TableCreateBean {
     public void setTargetConnection(ConnectionBean property) {
     	targetCon = property;
     }
+    
+    public void setDropIfExistsOption(boolean property) {
+    	dropIfExists = property;
+    }
 
     
     // Execution methods    
@@ -66,49 +70,68 @@ public class TableCreateBean {
     	boolean tableExistsFlag = false;
     	
     	DatabaseMetaData dbmd = targetCon.getConnection().getMetaData();
-    	//currentCatalog = targetCon.getCatalog();
-    	//currentSchema = targetCon.getSchema();
-    	ResultSet tables = dbmd.getTables(null, null, targetTable, null);
+    	ResultSet tables;
+    	if (targetCon.getDatabaseProductName().toUpperCase().contains("ORACLE") || targetCon.getDatabaseProductName().toUpperCase().contains("DB2")) {
+    		tables = dbmd.getTables(null, targetSchema.toUpperCase(), targetTable.toUpperCase(), null);
+    	}
+    	else {
+    		tables = dbmd.getTables(null, targetSchema, null, null);
+    	}
     	while(tables.next()) {
-    		if (tables.getString(3).equals(targetTable)) {
+    		logger.debug("Found table: " + tables.getString(3));
+    		if (tables.getString(3).toUpperCase().equals(targetTable.toUpperCase())) {
     			tableExistsFlag = true;
+        		logger.debug("Table exists");
     		}
     	}
+        logger.info("Drop table if it exists: " + String.valueOf(dropIfExists));
+        logger.info("Table exists:            " + String.valueOf(tableExistsFlag));
     	
-    	if ((dropIfExists == true ) && (tableExistsFlag == true)) {
+        try {
+	    	if ((dropIfExists == true ) && (tableExistsFlag == true)) {
+	            logger.info("Drop table");
+	    	
+	    		// Drop existing table
+		       	sqlText = "DROP TABLE " + targetSchema + "." + targetTable;
+		        logger.debug("Drop statement:\n" + sqlText);
+		
+		       	// Execute prepared statement
+		        PreparedStatement targetStmt;
+		    	targetStmt = targetCon.getConnection().prepareStatement(sqlText);
+		    	targetStmt.executeUpdate();
+		    	targetStmt.close();
+	            logger.info("Table dropped");
+	    		
+	    	}
+	    	if ((tableExistsFlag == false) || (dropIfExists == true )) {
+		    	
+		        logger.info("Create table");
+	    	
+	    		// create table    	
+		       	sqlText = "CREATE TABLE " + targetSchema + "." + targetTable + "(";
+		       	for (int i = 0; i < targetColumnDefinitions.length; i++) {
+			    	if (i > 0) {
+			    		sqlText += ",";
+			    	}
+		       		sqlText += targetColumns[i] + " " + targetColumnDefinitions[i];
+		       	}
+		       	sqlText += ")";
+		
+		       	// Execute prepared statement
+		        PreparedStatement targetStmt;
+		        logger.debug("Creation statement:\n" + sqlText);
+		    	targetStmt = targetCon.getConnection().prepareStatement(sqlText);
+		    	targetStmt.executeUpdate();
+		    	targetStmt.close();
+		    	
+		        logger.info("Table created");
+	    	}
+        }
+        catch (Exception e) {
+        	logger.error(e.toString());
+        	throw e;
+        }
     	
-    		// Drop existing table
-	       	sqlText = "DROP TABLE " + targetTable;
-	
-	       	// Execute prepared statement
-	        PreparedStatement targetStmt;
-	    	targetStmt = targetCon.getConnection().prepareStatement(sqlText);
-	    	targetStmt.executeUpdate();
-	    	targetStmt.close();
-    		
-    	}
-    	else if (tableExistsFlag == false) {
-    	
-    		// create table    	
-	       	sqlText = "CREATE TABLE " + targetTable + "(";
-	       	for (int i = 0; i < targetColumnDefinitions.length; i++) {
-		    	if (i > 0) {
-		    		sqlText += ",";
-		    	}
-	       		sqlText += targetColumns[i] + " " + targetColumnDefinitions[i];
-	       	}
-	       	sqlText += ")";
-	
-	       	// Execute prepared statement
-	        PreparedStatement targetStmt;
-	        logger.info("Creation statement:\n" + sqlText);
-	    	targetStmt = targetCon.getConnection().prepareStatement(sqlText);
-	    	targetStmt.executeUpdate();
-	    	targetStmt.close();
-	    
-    	}
-    	
-        logger.info("TABLE CREATED");
         logger.info("########################################");
     	
     }

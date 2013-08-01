@@ -249,6 +249,11 @@
 		<argName>source name</argName>
 	</option>
 	<option>
+		<name>sourceschema</name>
+		<description>Source Schema</description>
+		<argName>source schema</argName>
+	</option>
+	<option>
 		<name>sourcetable</name>
 		<description>Source Table</description>
 		<argName>source table</argName>
@@ -294,6 +299,11 @@
 		<argName>target name</argName>
 	</option>
 	<option>
+		<name>targetschema</name>
+		<description>Target Schema</description>
+		<argName>target schema</argName>
+	</option>
+	<option>
 		<name>targettable</name>
 		<description>Target Table</description>
 		<argName>target table</argName>
@@ -302,6 +312,11 @@
 		<name>trgcreate</name>
 		<description>Create Target Table</description>
 		<argName>create target table</argName>
+	</option>
+	<option>
+		<name>dropifexists</name>
+		<description>Drop target table if it exists</description>
+		<argName>drop if exists</argName>
 	</option>
 	<option>
 		<name>trgpreservedata</name>

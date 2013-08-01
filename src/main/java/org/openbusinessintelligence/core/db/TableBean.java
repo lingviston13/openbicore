@@ -1,6 +1,7 @@
 package org.openbusinessintelligence.core.db;
 
 import java.sql.*;
+import javax.sql.rowset.*;
 
 import org.slf4j.LoggerFactory;
 
@@ -27,12 +28,13 @@ public class TableBean {
 	private String[] insertValues = null;
 
 	// Declarations of internally used variables
-	private WebRowSetImpl webRS;
+	private WebRowSet webRS;
 	
 	/**
 	 * Open the connection and initialize the webrowset object
 	 */
-	private void open() {
+	private void open() throws Exception {
+		RowSetFactory rowSetFactory = RowSetProvider.newFactory();
 		if (sourceName.equals("") || sourceName == null) {
 			try {
 				Class.forName(databaseDriver).newInstance();
@@ -43,7 +45,7 @@ public class TableBean {
 				e.printStackTrace();
 			}
 			try {
-				webRS = new WebRowSetImpl();
+				webRS = rowSetFactory.createWebRowSet();
 				webRS.setUrl(connectionURL);
 				webRS.setUsername(userName);
 				webRS.setPassword(passWord);
@@ -55,7 +57,7 @@ public class TableBean {
 		}
 		else {
 			try {
-				webRS = new WebRowSetImpl();
+				webRS = rowSetFactory.createWebRowSet();
 				webRS.setDataSourceName("java:comp/env/jdbc/" + sourceName.toLowerCase());
 			}
 			catch(SQLException e) {
@@ -145,7 +147,7 @@ public class TableBean {
 	/**
 	 * Perform an insert on the given table
 	 */
-	public void insert() {
+	public void insert() throws Exception {
 		open();
 		try {
 			String sqlText = "SELECT ";
@@ -184,14 +186,14 @@ public class TableBean {
 	/**
 	 * Perform an update on the given table
 	 */
-	public void update() {
+	public void update() throws Exception {
 		open();
 	}
 	
 	/**
 	 * Perform an delete on the given table
 	 */
-	public void delete() {
+	public void delete() throws Exception {
 		open();
 		
 	}

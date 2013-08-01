@@ -13,6 +13,7 @@ You should have received a copy of the GNU General Public License along with Ope
 package org.openbusinessintelligence.core.file;
 
 import java.io.*;
+import java.net.*;
 
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +27,7 @@ public class FileInputBean {
 	static final org.slf4j.Logger logger = LoggerFactory.getLogger(FileInputBean.class);
 
     // Declarations of bean properties
+	private URI fileURI = null;
 	private String directoryName = "";
 	private String fileName = "";
 	private String filePath = "";
@@ -39,6 +41,10 @@ public class FileInputBean {
 	}
 
     // Set properties methods
+	public void setFileURI(URI property) {
+		fileURI = property;
+	}
+
 	public void setDirectoryName(String property) {
 		directoryName = property;
 	}
@@ -71,11 +77,13 @@ public class FileInputBean {
 		FileReader fileReader = null;
 		BufferedReader bufferedReader = null;
 		try {
+			//logger.debug(file.getAbsolutePath());
+			logger.debug(String.valueOf(file.exists()));
 			fileReader = new FileReader(file);
 			bufferedReader =new BufferedReader(fileReader);
 		}
 		catch (Exception e) {
-			logger.error("File " + filePath + " not found:\n" + e.getMessage());
+			logger.error("File " + filePath + " not found:\n" + e.toString());
 			throw e;
 		}
 		String lineBuffer;
@@ -94,15 +102,21 @@ public class FileInputBean {
 		return fileContent;
 	}
 	
-	private void createFile() {
-		if (filePath.equals("")) {
-			if (directoryName.equals("")) {
-				filePath = fileName;
-			}
-			else {
-				filePath = directoryName + File.separatorChar + fileName;
-			}
+	private void createFile() throws Exception {
+		if (!(fileURI == null)) {
+			file = new File(fileURI);
 		}
+		else {
+			if (filePath.equals("")) {
+				if (directoryName.equals("")) {
+					filePath = fileName;
+				}
+				else {
+					filePath = directoryName + File.separatorChar + fileName;
+				}
+			}
 		file = new File(filePath);
+		}
+		logger.debug("Absolute path: " + file.getAbsolutePath());
 	}
 }

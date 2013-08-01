@@ -33,7 +33,8 @@ public class QueryBean {
 
 	// Declarations of internally used variables
     private Properties connectionProperties = null;
-	private WebRowSetImpl webRS;
+	private WebRowSet webRS;
+	//private WebRowSetImpl webRS;
 	private String rawOutput = "";
 	
 	// Declarations for external streams and writers
@@ -118,6 +119,7 @@ public class QueryBean {
 	 * Execute the query and get the generated output in form of a WebRowSet object (XML)
 	 */
 	public WebRowSet getWebRS() throws Exception {
+		RowSetFactory rowSetFactory = RowSetProvider.newFactory();
 		if (sourceName.equals("") || sourceName == null) {
 			try {
 				Class.forName(databaseDriver).newInstance();
@@ -129,7 +131,7 @@ public class QueryBean {
 				throw e;
 			}
 			try {
-				webRS = new WebRowSetImpl();
+				webRS = rowSetFactory.createWebRowSet();
 				webRS.setUrl(connectionURL);
 				webRS.setUsername(userName);
 				webRS.setPassword(passWord);
@@ -142,7 +144,7 @@ public class QueryBean {
 		}
 		else {
 			try {
-				webRS = new WebRowSetImpl();
+				webRS =  rowSetFactory.createWebRowSet();
 				webRS.setDataSourceName("java:comp/env/jdbc/" + sourceName.toLowerCase());
 			}
 			catch(SQLException e) {
@@ -274,7 +276,8 @@ public class QueryBean {
 	/**
 	 * Execute the query using the WebRowSet object
 	 */
-	public void generate() {
+	public void generate() throws Exception {
+		RowSetFactory rowSetFactory = RowSetProvider.newFactory();
 
 		if (sourceName.equals("") || sourceName == null) {
 			try {
@@ -286,7 +289,7 @@ public class QueryBean {
 				e.printStackTrace();
 			}
 			try {
-				webRS = new WebRowSetImpl();
+				webRS = rowSetFactory.createWebRowSet();
 				webRS.setUrl(connectionURL);
 				webRS.setUsername(userName);
 				webRS.setPassword(passWord);
@@ -298,7 +301,7 @@ public class QueryBean {
 		}
 		else {
 			try {
-				webRS = new WebRowSetImpl();
+				webRS = rowSetFactory.createWebRowSet();
 				webRS.setDataSourceName("java:comp/env/jdbc/" + sourceName.toLowerCase());
 			}
 			catch(SQLException e) {

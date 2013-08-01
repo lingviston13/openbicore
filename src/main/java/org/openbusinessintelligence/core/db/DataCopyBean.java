@@ -28,6 +28,7 @@ public class DataCopyBean {
 
     // Target properties
     private ConnectionBean targetCon = null;
+    private String targetSchema = "";
     private String targetTable = "";
     private boolean preserveDataOption = false;
     
@@ -73,6 +74,10 @@ public class DataCopyBean {
     // Set target properties methods
     public void setTargetConnection(ConnectionBean property) {
     	targetCon = property;
+    }
+    
+    public void setTargetSchema(String property) {
+        targetSchema = property;
     }
     
     public void setTargetTable(String ta) {
@@ -133,10 +138,16 @@ public class DataCopyBean {
     public void retrieveColumnList() throws Exception {
     	logger.info("########################################");
     	logger.info("RETRIEVING COLUMN LIST...");
-       	
+    	
+    	String sourcePrefix = "";
+    	if (!(sourceCon.getSchemaName() == null || sourceCon.getSchemaName().equals(""))) {
+    		sourcePrefix = sourceCon.getSchemaName() + ".";
+    		logger.debug("Prefix for source table: " + sourcePrefix);
+    	}
+    	
        	String sql;
        	if (sourceQuery == null || sourceQuery.equals("")) {
-       		sql = "SELECT * FROM " + sourceTable;
+       		sql = "SELECT * FROM " + sourceCon.getObjectIdentifier(sourceTable);
        	}
        	else {
        		sql = sourceQuery;
@@ -144,7 +155,7 @@ public class DataCopyBean {
        	
     	String[] sourceColumns = retrieveColumns(sourceCon.getConnection(),sql);
 
-    	sql = "SELECT * FROM " + targetTable;
+    	sql = "SELECT * FROM " + targetSchema + "." + targetTable;
     	String[] targetColumns = retrieveColumns(targetCon.getConnection(),sql);
 
     	List<String> list = new ArrayList<String>();
@@ -223,16 +234,15 @@ public class DataCopyBean {
 	    	for (int i = 0; i < commonColumns.length; i++) {
 	    		if (i > 0) {
 	    			queryText += ",";
-	    			}
-	    		queryText += commonColumns[i];
+	    		}
+	    		queryText += sourceCon.getColumnIdentifier(commonColumns[i]);
 	    	}
 	    	if (sourceMapColumns!=null) {
 	    		for (int i = 0; i < sourceMapColumns.length; i++) {
 	    			queryText += "," + sourceMapColumns[i];
 	    		}
 	    	}
-	    	
-			queryText += " FROM " + sourceTable;
+			queryText += " FROM " + sourceCon.getObjectIdentifier(sourceTable);
     	}
     	else {
     		queryText = sourceQuery;
@@ -257,17 +267,28 @@ public class DataCopyBean {
         PreparedStatement targetStmt;
         logger.info("Preserve target data = " + preserveDataOption);
         if (!preserveDataOption) {
-           	targetStmt = targetCon.getConnection().prepareStatement("TRUNCATE TABLE " + targetTable);
+            logger.info("Truncate table");
+            String truncateText;
+            truncateText = "TRUNCATE TABLE " + targetSchema + "." + targetTable;
+           	if (targetCon.getDatabaseProductName().toUpperCase().contains("DB2")) {
+           		targetCon.closeConnection();
+           		targetCon.openConnection();
+           		truncateText += " IMMEDIATE";
+           	}
+            logger.debug(truncateText);
+           	targetStmt = targetCon.getConnection().prepareStatement(truncateText);
             targetStmt.executeUpdate();
             targetStmt.close();
+            targetCon.getConnection().commit();
+            logger.info("Table truncated");
         }
         
-        String insertText = "INSERT /*+APPEND*/ INTO " + targetTable + " (";
+        String insertText = "INSERT /*+APPEND*/ INTO " + targetSchema + "." + targetTable + " (";
         for (int i = 0; i < commonColumns.length; i++) {
         	if (i > 0) {
         		insertText += ",";
         	}
-        	insertText += commonColumns[i];
+        	insertText += targetCon.getColumnIdentifier(commonColumns[i]);
         }
         
         if (targetMapColumns!=null) {
@@ -324,7 +345,6 @@ public class DataCopyBean {
 	    			try {
 	    				targetStmt.setObject(position, sourceRS.getObject(commonColumns[i]));
 	    			}
-	    			
 	    			catch (Exception e){
 	    				targetStmt.setObject(position, null);
 	    			}
@@ -353,6 +373,8 @@ public class DataCopyBean {
 		                }
 		            }
 	            }
+		    	targetStmt.executeUpdate();
+		    	targetStmt.clearParameters();
 	        }
 	        catch(Exception e) {
 	        	logger.error("Unexpected exception, list of column values:");
@@ -367,8 +389,6 @@ public class DataCopyBean {
 	            logger.error(e.getMessage());
 	            throw e;
 	        }
-	    	targetStmt.executeUpdate();
-	    	targetStmt.clearParameters();
 	    	
 	    	rowCount++;
 	    	rowSinceCommit++;

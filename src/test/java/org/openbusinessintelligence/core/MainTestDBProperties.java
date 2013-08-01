@@ -27,9 +27,9 @@ public class MainTestDBProperties {
 		initArguments();
 		//
 		arguments[3] = "com.mysql.jdbc.Driver";
-		arguments[5] = "jdbc:mysql://msas4042i.msg.de:3306/dwh_extract";
-		arguments[7] = "dwh_extract";
-		arguments[9] = "msg2013";
+		arguments[5] = "jdbc:mysql://localhost:3306/dwhstage";
+		arguments[7] = "dwhstage";
+		arguments[9] = "dwhstage";
 		// Perform test
 		try {
 			Main.main(arguments);
@@ -45,9 +45,9 @@ public class MainTestDBProperties {
 		initArguments();
 		//
 		arguments[3] = "org.postgresql.Driver";
-		arguments[5] = "jdbc:postgresql://msas4042i.msg.de:5432/postgres";
-		arguments[7] = "dwhextract";
-		arguments[9] = "msg2013";
+		arguments[5] = "jdbc:postgresql://localhost:5432/postgres";
+		arguments[7] = "dwhload";
+		arguments[9] = "dwhload";
 		// Perform test
 		try {
 			Main.main(arguments);
@@ -57,4 +57,57 @@ public class MainTestDBProperties {
 		}
 	}
 
+	@Test
+	public void testSQLServer() {
+		
+		initArguments();
+		//
+		arguments[3] = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
+		arguments[5] = "jdbc:sqlserver://localhost:1433;instance=MSSQLSERVER";
+		arguments[7] = "dwhadmin";
+		arguments[9] = "openbi";
+		// Perform test
+		try {
+			Main.main(arguments);
+		}
+		catch (Exception e) {
+			fail("Exception: \n" + e);
+		}
+	}
+
+	@Test
+	public void testDB2() {
+		
+		initArguments();
+		//
+		arguments[3] = "com.ibm.db2.jcc.DB2Driver";
+		arguments[5] = "jdbc:db2://localhost:50000/SAMPLE";
+		arguments[7] = "db2user";
+		arguments[9] = "db2user";
+		// Perform test
+		try {
+			Main.main(arguments);
+		}
+		catch (Exception e) {
+			fail("Exception: \n" + e);
+		}
+	}
+
+	@Test
+	public void testOracle() {
+		
+		initArguments();
+		//
+		arguments[3] = "oracle.jdbc.OracleDriver";
+		arguments[5] = "jdbc:oracle:thin:@//localhost:1521/dwhdev";
+		arguments[7] = "dwhstage";
+		arguments[9] = "dwhstage";
+		// Perform test
+		try {
+			Main.main(arguments);
+		}
+		catch (Exception e) {
+			fail("Exception: \n" + e);
+		}
+	}
 }
