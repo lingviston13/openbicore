@@ -135,7 +135,7 @@
 	
 	<!-- Query options -->
 	<option>
-		<name>dbconnaddpropertyfile</name>
+		<name>dbconnpropertyfile</name>
 		<description>Connection Additional Property File</description>
 		<argName>connection additional property file</argName>
 	</option>
@@ -173,9 +173,9 @@
 	
 	<!-- Procedure options -->
 	<option>
-		<name>dbconnaddpropertyfile</name>
-		<description>Connection Additional Property File</description>
-		<argName>connection additional property file</argName>
+		<name>dbconnpropertyfile</name>
+		<description>Connection Property File</description>
+		<argName>connection property file</argName>
 	</option>
 	<option>
 		<name>dbdriverclass</name>
@@ -214,14 +214,9 @@
 	
 	<!-- Table copy option -->
 	<option>
-		<name>srcconnaddpropertyfile</name>
-		<description>Source Connection Additional Property File</description>
-		<argName>source connection additional property file</argName>
-	</option>
-	<option>
-		<name>srcdbpropertyfile</name>
-		<description>Source DB Property File</description>
-		<argName>source jdbc property file</argName>
+		<name>srcdbconnpropertyfile</name>
+		<description>Source Connection Property File</description>
+		<argName>source connection property file</argName>
 	</option>
 	<option>
 		<name>srcdbdriverclass</name>
@@ -264,14 +259,9 @@
 		<argName>source query</argName>
 	</option>
 	<option>
-		<name>trgconnaddpropertyfile</name>
+		<name>trgdbconnpropertyfile</name>
 		<description>Target Connection Additional Property File</description>
 		<argName>target connection additional property file</argName>
-	</option>
-	<option>
-		<name>trgdbpropertyfile</name>
-		<description>Target DB Property File</description>
-		<argName>target jdbc property file</argName>
 	</option>
 	<option>
 		<name>trgdbdriverclass</name>

@@ -212,25 +212,31 @@ public class ConnectionBean {
     	
     	try {
 	        if (dataSourceName == null ||dataSourceName.equals("")) {
-	        	Class.forName(databaseDriver).newInstance();
-	        	logger.info("Loaded database driver " + databaseDriver);
+	        	// Get connection using driver
 	        	if (propertyFile == null || propertyFile.equals("")) {
-	            	
+	            	// Use given username and password
 	            	logger.info("Using username & password");
-	        		
+		        	Class.forName(databaseDriver).newInstance();
+		        	logger.info("Loaded database driver " + databaseDriver);
 	            	connection = DriverManager.getConnection(connectionURL, userName, passWord);
 	        	}
 	        	else {
-	            	
+	            	// Use property file
 	            	logger.info("Using property file " + propertyFile);
-	        		
 	            	Properties connectionProperties = new Properties();
-	            	connectionProperties.load(new FileInputStream(propertyFile));
+	            	connectionProperties.load(new FileInputStream("datasources/" + propertyFile + ".properties"));
+	        		if (databaseDriver == null || databaseDriver.equals("")) {
+	        			// Get driver and url from property file
+	        			databaseDriver = connectionProperties.getProperty("driver");
+	        			connectionURL = connectionProperties.getProperty("url");
+	        		}
+		        	Class.forName(databaseDriver).newInstance();
 	        		connection = DriverManager.getConnection(connectionURL, connectionProperties);
 	        	}
 	        	logger.debug("Connected to database " + connectionURL);
 	        }
 	        else {
+	        	// Get connection from application server
 	        	InitialContext ic = new InitialContext();
 	        	DataSource ds = (DataSource)ic.lookup("java:comp/env/jdbc/" + dataSourceName.toLowerCase());
 	        	connection = ds.getConnection();

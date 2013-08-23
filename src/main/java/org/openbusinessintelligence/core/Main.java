@@ -163,7 +163,7 @@ public class Main {
 	    		// Execute a store procedure
 				org.openbusinessintelligence.core.db.ProcedureBean procedure = new org.openbusinessintelligence.core.db.ProcedureBean();
 				
-				procedure.setPropertyFile(getOption("dbconnaddpropertyfile"));
+				procedure.setPropertyFile(getOption("dbconnpropertyfile"));
 				procedure.setDatabaseDriver(getOption("dbdriverclass"));
 				procedure.setConnectionURL(getOption("dbconnectionurl"));
 				procedure.setUserName(getOption("dbusername"));
@@ -184,7 +184,7 @@ public class Main {
 				logger.info("Get database properties");
 	    		// Execute a store procedure
 	    		org.openbusinessintelligence.core.db.ConnectionBean connectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
-	    		connectionBean.setPropertyFile(getOption("connaddpropertyfile"));
+	    		connectionBean.setPropertyFile(getOption("dbconnpropertyfile"));
 	    		connectionBean.setDatabaseDriver(getOption("dbdriverclass"));
 	    		connectionBean.setConnectionURL(getOption("dbconnectionurl"));
 	    		connectionBean.setUserName(getOption("dbusername"));
@@ -205,7 +205,7 @@ public class Main {
 				logger.info("Copy all tables of a schema, a single table or the result of a query from a database to another");
 				
 	    		org.openbusinessintelligence.core.db.ConnectionBean sourceConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
-	    		sourceConnectionBean.setPropertyFile(getOption("srcconnaddpropertyfile"));
+	    		sourceConnectionBean.setPropertyFile(getOption("srcdbconnpropertyfile"));
 	    		sourceConnectionBean.setDatabaseDriver(getOption("srcdbdriverclass"));
 	    		sourceConnectionBean.setConnectionURL(getOption("srcdbconnectionurl"));
 	    		sourceConnectionBean.setUserName(getOption("srcdbusername"));
@@ -213,7 +213,7 @@ public class Main {
 	    		sourceConnectionBean.openConnection();
 	    		
 	    		org.openbusinessintelligence.core.db.ConnectionBean targetConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
-	    		targetConnectionBean.setPropertyFile(getOption("trgconnaddpropertyfile"));
+	    		targetConnectionBean.setPropertyFile(getOption("trgdbconnpropertyfile"));
 	    		targetConnectionBean.setDatabaseDriver(getOption("trgdbdriverclass"));
 	    		targetConnectionBean.setConnectionURL(getOption("trgdbconnectionurl"));
 	    		targetConnectionBean.setUserName(getOption("trgdbusername"));
@@ -332,7 +332,7 @@ public class Main {
 	    		String sourceZipFile = getOption("sourcezipfile");
 	    		if (!(sourceZipFile == null || sourceZipFile.equals(""))) {
 		    		org.openbusinessintelligence.core.db.ConnectionBean sourceConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
-		    		sourceConnectionBean.setPropertyFile(getOption("srcconnaddpropertyfile"));
+		    		sourceConnectionBean.setPropertyFile(getOption("srcdbconnpropertyfile"));
 		    		sourceConnectionBean.setDatabaseDriver(getOption("srcdbdriverclass"));
 		    		sourceConnectionBean.setConnectionURL("jdbc:relique:csv:zip:" + sourceZipFile);
 		    		sourceConnectionBean.setUserName(getOption("srcdbusername"));
@@ -340,7 +340,7 @@ public class Main {
 		    		//sourceConnectionBean.openConnection();
 					
 		    		org.openbusinessintelligence.core.db.ConnectionBean targetConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
-		    		targetConnectionBean.setPropertyFile(getOption("trgconnaddpropertyfile"));
+		    		targetConnectionBean.setPropertyFile(getOption("trgdbconnpropertyfile"));
 		    		targetConnectionBean.setDatabaseDriver(getOption("trgdbdriverclass"));
 		    		targetConnectionBean.setConnectionURL(getOption("trgdbconnectionurl"));
 		    		targetConnectionBean.setUserName(getOption("trgdbusername"));
@@ -375,42 +375,6 @@ public class Main {
 					}
 	        	}
 	    	}
-	    	/*if (function.equalsIgnoreCase("importdbdictionary")) {
-				org.openbusinessintelligence.tools.db.DataDictionaryBean dataDictionary = new org.openbusinessintelligence.tools.db.DataDictionaryBean();
-				
-				// Import dictionary information about a table or query into a target table
-				dataDictionary.setSourcePropertyFile(getOption("srcconnaddpropertyfile"));
-				dataDictionary.setSourceDatabaseDriver(getOption("srcdbdriverclass"));
-				dataDictionary.setSourceConnectionURL(getOption("srcdbconnectionurl"));
-				dataDictionary.setSourceUserName(getOption("srcdbusername"));
-				dataDictionary.setSourcePassWord(getOption("srcdbpassword"));
-				dataDictionary.setSourceTable(getOption("sourcetable"));
-				dataDictionary.setSourceQuery(getOption("sourcequery"));
-				
-				dataDictionary.setTargetPropertyFile(getOption("trgconnaddpropertyfile"));
-				dataDictionary.setTargetDatabaseDriver(getOption("trgdbdriverclass"));
-				dataDictionary.setTargetConnectionURL(getOption("trgdbconnectionurl"));
-				dataDictionary.setTargetUserName(getOption("trgdbusername"));
-				dataDictionary.setTargetPassWord(getOption("trgdbpassword"));
-				dataDictionary.setTargetTable(getOption("targettable"));
-				dataDictionary.setTargetColumns(getOption("targetcolumns"));		
-				
-				String mappingDefFile = getOption("mapdeffile");
-				dataDictionary.setMappingDefFile(mappingDefFile);
-				
-				try {
-					if (mappingDefFile!=null) {
-						dataDictionary.retrieveMappingDefinition();
-					}
-					dataDictionary.retrieveColumns();
-					dataDictionary.executeInsert();
-				}
-				catch (Exception e) {
-					logger.error("UNEXPECTED EXCEPTION");
-					logger.error(e.getMessage());
-				    throw e;
-				}
-	    	}*/
 	    	if (function.equalsIgnoreCase("mergefiles")) {
 				org.openbusinessintelligence.core.file.FileMergeBean fileMerge = new org.openbusinessintelligence.core.file.FileMergeBean();
 				fileMerge.setInputZipFile(getOption("sourcezipfile"));

@@ -4,4 +4,64 @@
 		<connection host="msgs469i.msg.de" port="9088" server="informix" database="sysmaster" url="jdbc:informix-sqli://msgs469i.msg.de:9088/sysmaster:INFORMIXSERVER=informix" user="informix" password="HhcBchESF3bk" type="dev"/>
 		<custom-property name="default.autocommit" value="false"/>
 	</data-source>
+	<data-source id="oracle_thin-1375980153882-326023828" provider="oracle" driver="oracle_thin" name="Oracle - DWHDEV" create-date="1375980153882" save-password="true" show-system-objects="true" read-only="false">
+		<connection server="" database="DWHDEV" url="jdbc:oracle:thin:@DWHDEV" user="system" password="PBQDLhMTFUUnO2bf" home="d:\programs\oracle\product\12.1.0\dbhome_1" type="dev">
+			<property name="@dbeaver-sid-service@" value="SERVICE"/>
+			<property name="@dbeaver-connection-type@" value="TNS"/>
+			<property name="@dbeaver-check-schema-content@" value="true"/>
+			<property name="@dbeaver-always-show-dba@" value="false"/>
+		</connection>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="postgresql-1375980191476--1020279567" provider="generic" driver="postgresql" name="PostgreSQL - postgres" create-date="1375980191476" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="5432" server="" database="postgres" url="jdbc:postgresql://localhost:5432/postgres" user="postgres" password="HBQDLkNKJPc=" type="dev"/>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="mysql5-1375980267022-1090378240" provider="mysql" driver="mysql5" name="MySQL - localhost" create-date="1375980267022" update-date="1377177924797" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="3306" server="" database="mysql" url="jdbc:mysql://localhost:3306/mysql" user="root" password="HBQDLkNKJPc=" home="C:\Program Files\MySQL\MySQL Server 5.6" type="dev">
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
+				<property name="port" value="22"/>
+				<property name="host" value=""/>
+				<property name="keyPath" value=""/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+		</connection>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="db2-1375980446866-1694303245" provider="generic" driver="db2" name="DB2 - localhost" create-date="1375980446866" update-date="1377184367747" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="50000" server="" database="sample" url="jdbc:db2://localhost:50000/sample" user="marangon" password="UDcTMERRFUNVR0Ve9g==" type="dev">
+			<property name="progressiveStreaming" value="2"/>
+			<property name="fullyMaterializeInputStreams" value="true"/>
+			<property name="fullyMaterializeLobData" value="true"/>
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
+				<property name="port" value="22"/>
+				<property name="host" value=""/>
+				<property name="keyPath" value=""/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+		</connection>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="apache_cassandra-1376044430271--81311764" provider="nosql.cassandra" driver="apache_cassandra" name="Cassandra - system" create-date="1376044430271" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="9160" server="" database="system" url="jdbc:jkiss:cassandra://localhost:9160/system" user="" type="dev"/>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="derby_server-1376045275421-748902108" provider="generic" driver="derby_server" name="Derby - sun-appserv-samples" create-date="1376045275421" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="1527" server="" database="sun-appserv-samples" url="jdbc:derby://localhost:1527/sun-appserv-samples;create=false" user="APP" password="MjQ2QKA=" type="dev"/>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="mssql_ms-1377184345366-156183989" provider="generic" driver="mssql_ms" name="SQLServer - localhost" create-date="1377184345366" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="1433" server="" database="" url="jdbc:sqlserver://localhost:1433" user="sa" password="HBQDLkNKJPc=" type="dev"/>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="mysql5-1377255266868-862310178" provider="mysql" driver="mysql5" name="MySQL - localhost  - sugarcrm" create-date="1377255266868" update-date="1377255310494" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="localhost" port="3306" server="" database="sugarcrm" url="jdbc:mysql://localhost:3306/sugarcrm" user="sugarcrm" password="ABEBIVNAVhtl8w==" home="C:\Program Files\MySQL\MySQL Server 5.6" type="dev">
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
+				<property name="port" value="22"/>
+				<property name="host" value=""/>
+				<property name="keyPath" value=""/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+		</connection>
+	</data-source>
 </data-sources>
