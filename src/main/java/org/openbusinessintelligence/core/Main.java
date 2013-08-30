@@ -410,7 +410,7 @@ public class Main {
 		try {
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			javax.xml.parsers.DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			optionsXML = docBuilder.parse(Main.class.getClassLoader().getResource("cmd/coreCmdOptions.xml").toString());
+			optionsXML = docBuilder.parse(Thread.currentThread().getContextClassLoader().getResource("cmd/coreCmdOptions.xml").toString());
 			optionsXML.getDocumentElement().normalize();
 		}
 		catch(Exception e) {

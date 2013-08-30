@@ -247,9 +247,12 @@ public class ConnectionBean {
 	
 	    	metadata = connection.getMetaData();
 	    	databaseProductName = metadata.getDatabaseProductName();
-	    	FileInputBean keyWordFile = new FileInputBean();
-	    	keyWordFile.setFileURI(ConnectionBean.class.getClassLoader().getResource("conf/SQL2003Keywords.txt").toURI());
-	    	keyWords = keyWordFile.getString().replace("\n", ",");
+	    	//FileInputBean keyWordFile = new FileInputBean();
+	    	InputStream keyWordFile = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/SQL2003Keywords.txt");
+	    	java.util.Scanner scanner = new java.util.Scanner(keyWordFile).useDelimiter("\\A");
+	    	keyWords = scanner.next().replace("\n", ",");
+	    	keyWordFile.close();
+	    	scanner.close();
 	    	keyWords += metadata.getSQLKeywords();
 	    	logger.debug("Keywords: " + keyWords);
 	    	quoteString = metadata.getIdentifierQuoteString();
