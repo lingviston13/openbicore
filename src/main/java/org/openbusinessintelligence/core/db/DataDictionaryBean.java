@@ -158,6 +158,8 @@ public class DataDictionaryBean {
         logger.info("Source RDBMS product: " + sourceProductName);
         logger.info("Target RDBMS product: " + targetProductName);
         
+        TypeConversionBean typeConverter = new TypeConversionBean();
+        
        	for (int i = 1; i <= rsmd.getColumnCount(); i++) {
         	sourceColumnNames[i - 1] = rsmd.getColumnName(i).toUpperCase();
         	targetColumnNames[i - 1] = sourceColumnNames[i - 1];

@@ -62,7 +62,7 @@
 		</connection>
 		<custom-property name="default.autocommit" value="false"/>
 	</data-source>
-	<data-source id="apache_cassandra-1376044430271--81311764" provider="nosql.cassandra" driver="apache_cassandra" name="localhost_cassandra_ system" create-date="1376044430271" update-date="1377516927331" save-password="true" show-system-objects="true" read-only="false">
+	<data-source id="apache_cassandra-1376044430271--81311764" provider="nosql.cassandra" driver="apache_cassandra" name="localhost_cassandra_system" create-date="1376044430271" update-date="1378398924854" save-password="true" show-system-objects="true" read-only="false">
 		<connection host="localhost" port="9160" server="" database="system" url="jdbc:jkiss:cassandra://localhost:9160/system" user="" type="dev">
 			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
 				<property name="port" value="22"/>
@@ -73,7 +73,7 @@
 		</connection>
 		<custom-property name="default.autocommit" value="false"/>
 	</data-source>
-	<data-source id="derby_server-1376045275421-748902108" provider="generic" driver="derby_server" name="localhost_derby_sun-appserv-samples" create-date="1376045275421" update-date="1377516789596" save-password="true" show-system-objects="true" read-only="false">
+	<data-source id="derby_server-1376045275421-748902108" provider="generic" driver="derby_server" name="localhost_derby_sun-appserv-samples" create-date="1376045275421" update-date="1378475139348" save-password="true" show-system-objects="true" read-only="false">
 		<connection host="localhost" port="1527" server="" database="sun-appserv-samples" url="jdbc:derby://localhost:1527/sun-appserv-samples;create=false" user="APP" password="MjQ2QKA=" type="dev">
 			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
 				<property name="port" value="22"/>
@@ -127,5 +127,31 @@
 				<property name="authType" value="PASSWORD"/>
 			</network-handler>
 		</connection>
+	</data-source>
+	<data-source id="informix-1378215632430--1883107713" provider="generic" driver="informix" name="ubuntudesktop_ifx" create-date="1378215632431" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="ubuntudesktop" port="9088" server="ol_informix1210" database="sysmaster" url="jdbc:informix-sqli://ubuntudesktop:9088/sysmaster:INFORMIXSERVER=ol_informix1210" user="informix" password="HBQDLkNKJPc=" type="dev"/>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="apache_cassandra-1378397534096-1455493119" provider="nosql.cassandra" driver="apache_cassandra" name="ubuntudesktop_cassandra_system" create-date="1378397534096" update-date="1378399283200" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="ubuntudesktop" port="9160" server="" database="system" url="jdbc:jkiss:cassandra://ubuntudesktop:9160/system" user="" type="dev">
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
+				<property name="port" value="22"/>
+				<property name="host" value=""/>
+				<property name="keyPath" value=""/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+		</connection>
+		<custom-property name="default.autocommit" value="false"/>
+	</data-source>
+	<data-source id="teradata-1380633866664-1384662275" provider="generic" driver="teradata" name="tdexpress1410_sles11_teradata_dbc" create-date="1380633866664" update-date="1380634079226" save-password="true" show-system-objects="true" read-only="false">
+		<connection host="tdexpress1410_sles11" server="" database="dbc" url="jdbc:teradata://tdexpress1410_sles11/dbc" user="dbc" password="FwYFQKA=" type="dev">
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" user="" save-password="false">
+				<property name="port" value="22"/>
+				<property name="host" value=""/>
+				<property name="keyPath" value=""/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+		</connection>
+		<custom-property name="default.autocommit" value="false"/>
 	</data-source>
 </data-sources>
