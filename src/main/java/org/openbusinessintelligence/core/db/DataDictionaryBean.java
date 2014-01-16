@@ -45,12 +45,13 @@ public class DataDictionaryBean {
     private String[] targetColumnDefinitions = null;
     
     private int[] columnPkPositions = null;
+    private String[] targetColumnInPk = null;
+    private String[] targetColumnNonInPk = null;
     
     // Constructor
     public DataDictionaryBean() {
         super();
     }
-    
 
     // Set source properties methods
     public void setSourceTable(String property) {
@@ -158,7 +159,7 @@ public class DataDictionaryBean {
         logger.info("Source RDBMS product: " + sourceProductName);
         logger.info("Target RDBMS product: " + targetProductName);
         
-        TypeConversionBean typeConverter = new TypeConversionBean();
+        //TypeConversionBean typeConverter = new TypeConversionBean();
         
        	for (int i = 1; i <= rsmd.getColumnCount(); i++) {
         	sourceColumnNames[i - 1] = rsmd.getColumnName(i).toUpperCase();
@@ -193,11 +194,89 @@ public class DataDictionaryBean {
 
            	//*******************************
         	// set target column properties
-        	if (sourceColumnType[i - 1].contains("CHAR") && sourceColumnLength[i - 1] == 1) {
+            // NCHAR and NVARCHAR types
+            if (sourceColumnType[i - 1].contains("NCHAR") && sourceColumnLength[i - 1] == 1) {
+                targetColumnType[i - 1] = "NCHAR (1)";
+            }
+            else if (
+                (
+                    (sourceColumnType[i - 1].contains("NCHAR") || sourceColumnType[i - 1].contains("NVARCHAR")) &&
+                    sourceColumnLength[i - 1] > 1
+                ) ||
+                (sourceColumnType[i - 1].contains("UNIQUE"))
+            ) {
+                if (targetProductName.toUpperCase().contains("ORACLE")) {
+                    if (sourceColumnLength[i - 1] > 4000) {
+                        targetColumnType[i - 1] = "CLOB";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "NVARCHAR2";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else if (targetProductName.toUpperCase().contains("DB2")) {
+                    if (sourceColumnLength[i - 1] > 32672) {
+                        targetColumnType[i - 1] = "CLOB";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "NVARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else if (targetProductName.toUpperCase().contains("POSTGRES")) {
+                    if (sourceColumnLength[i - 1] > 10000000) {
+                        targetColumnType[i - 1] = "TEXT";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "NVARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else if (targetProductName.toUpperCase().contains("MYSQL")) {
+                    if (sourceColumnLength[i - 1] > 255) {
+                        targetColumnType[i - 1] = "LONGTEXT";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "NVARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else if (targetProductName.toUpperCase().contains("INFORMIX")) {
+                    if ((sourceColumnLength[i - 1] > 255) && (sourceColumnLength[i - 1] <= 32739)) {
+                        targetColumnType[i - 1] = "LVARCHAR";
+                    }
+                    else if (sourceColumnLength[i - 1] > 32739) {
+                    	targetColumnType[i - 1] = "TEXT";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "NVARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else if (targetProductName.toUpperCase().contains("HDB")) {
+                    if (sourceColumnLength[i - 1] > 5000) {
+                        targetColumnType[i - 1] = "CLOB";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "NVARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else {
+                    targetColumnType[i - 1] = "NVARCHAR";
+                    if (targetProductName.toUpperCase().contains("MICROSOFT") && (sourceColumnLength[i - 1] > 8000)) {
+                        targetColumnLength[i - 1] = -1;
+                    }
+                    else {
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+            }
+            // CHAR and VARCHAR types
+        	else if (sourceColumnType[i - 1].contains("CHAR") && sourceColumnLength[i - 1] == 1) {
            		targetColumnType[i - 1] = "CHAR (1)";
            	}
-        	else if ((sourceColumnType[i - 1].contains("CHAR") && sourceColumnLength[i - 1] > 1) ||
-        			 (sourceColumnType[i - 1].contains("UNIQUE"))) {
+        	else if ((sourceColumnType[i - 1].contains("CHAR") && sourceColumnLength[i - 1] > 1)) {
         		if (targetProductName.toUpperCase().contains("ORACLE")) {
             		if (sourceColumnLength[i - 1] > 4000) {
             			targetColumnType[i - 1] = "CLOB";
@@ -234,6 +313,27 @@ public class DataDictionaryBean {
             			targetColumnLength[i - 1] = sourceColumnLength[i - 1];
             		}
         		}
+                else if (targetProductName.toUpperCase().contains("INFORMIX")) {
+                    if ((sourceColumnLength[i - 1] > 255) && (sourceColumnLength[i - 1] <= 32739)) {
+                        targetColumnType[i - 1] = "LVARCHAR";
+                    }
+                    else if (sourceColumnLength[i - 1] > 32739) {
+                    	targetColumnType[i - 1] = "TEXT";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "VARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
+                else if (targetProductName.toUpperCase().contains("HDB")) {
+                    if (sourceColumnLength[i - 1] > 5000) {
+                        targetColumnType[i - 1] = "CLOB";
+                    }
+                    else {
+                        targetColumnType[i - 1] = "VARCHAR";
+                        targetColumnLength[i - 1] = sourceColumnLength[i - 1];
+                    }
+                }
 	        	else {
         			targetColumnType[i - 1] = "VARCHAR";
         			if (targetProductName.toUpperCase().contains("MICROSOFT") && (sourceColumnLength[i - 1] > 8000)) {
@@ -253,6 +353,12 @@ public class DataDictionaryBean {
            		}
            		else if (targetProductName.toUpperCase().contains("POSTGRE")) {
                		targetColumnType[i - 1] = "TIMESTAMP";
+           		}
+           		else if (targetProductName.toUpperCase().contains("INFORMIX")) {
+               		targetColumnType[i - 1] = "DATETIME YEAR TO FRACTION(3)";
+           		}
+           		else if (targetProductName.toUpperCase().contains("HDB")) {
+               		targetColumnType[i - 1] = "SECONDDATE";
            		}
            		else {
            			targetColumnType[i - 1] = "DATETIME";
@@ -373,24 +479,61 @@ public class DataDictionaryBean {
        	}
         rs.close();
         columnStmt.close();
-    	logger.info(String.valueOf(sourceTable.split("\\.").length));
-        String schema = null;
-        if (sourceTable.split("\\.").length==2) {
-        	schema = sourceTable.split("\\.")[0];
-        	logger.info(schema);
-        }
-        ResultSet rspk = sourceCon.getConnection().getMetaData().getPrimaryKeys(schema, schema, sourceTable.split("\\.")[sourceTable.split("\\.").length-1]);
-        while (rspk.next()) {
-        	logger.info("PRIMARY KEY Position: " + rspk.getObject("KEY_SEQ") + " Column: " + rspk.getObject("COLUMN_NAME"));
-         	for (int i = 0; i < sourceColumnNames.length; i++) {
-         		if (sourceColumnNames[i].equalsIgnoreCase(rspk.getString("COLUMN_NAME"))) {
-         			columnPkPositions[i] = rspk.getInt("KEY_SEQ");
-         		}
-           	}
-        }
-        rspk.close();
 
-       	logger.info("SQL: " + sqlText + ": got columns");
+        logger.info("got column properties");
+
+        try {
+            String schema = null;
+            if (sourceTable.split("\\.").length==2) {
+                schema = sourceTable.split("\\.")[0];
+                logger.info("Schema: " + schema);
+            }
+
+            // Get information about primary keys
+            logger.info("get primary key information...");
+            logger.debug("Table: " + sourceTable.split("\\.")[sourceTable.split("\\.").length-1]);
+
+            ResultSet rspk = sourceCon.getConnection().getMetaData().getPrimaryKeys(schema, schema, sourceTable.split("\\.")[sourceTable.split("\\.").length-1]);
+            int pkLength = 0;
+            while (rspk.next()) {
+                logger.info("PRIMARY KEY Position: " + rspk.getObject("KEY_SEQ") + " Column: " + rspk.getObject("COLUMN_NAME"));
+                for (int i = 0; i < sourceColumnNames.length; i++) {
+                    if (sourceColumnNames[i].equalsIgnoreCase(rspk.getString("COLUMN_NAME"))) {
+                        columnPkPositions[i] = rspk.getInt("KEY_SEQ");
+                        pkLength++;
+                    }
+                }
+            }
+            rspk.close();
+            logger.info("got primary key information...");
+
+            if (pkLength>0) {
+                targetColumnInPk = new String[pkLength];
+                targetColumnNonInPk = new String[targetColumnNames.length - pkLength];
+                int iPk = 0;
+                int nPk = 0;
+                for (int i = 0; i < targetColumnNames.length; i++) {
+                    if (columnPkPositions[i]>=1) {
+                        targetColumnInPk[iPk] = targetColumnNames[i];
+                        iPk++;
+                    }
+                    else {
+                        targetColumnInPk[nPk] = targetColumnNames[i];
+                        nPk++;
+                    }
+                }
+            }
+            else {
+                targetColumnNonInPk = targetColumnNames;
+            }
+
+        }
+        catch (Exception e) {
+            logger.error(e.toString());
+            throw e;
+        }
+
+        logger.info("got primary key information");
     }
     
     public void retrieveMappingDefinition() throws Exception {

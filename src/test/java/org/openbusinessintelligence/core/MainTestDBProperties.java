@@ -18,7 +18,7 @@ public class MainTestDBProperties {
 		
 	}
 
-	@Test
+	/*@Test
 	public void testMySQL() {
 		
 		initArguments();
@@ -84,6 +84,36 @@ public class MainTestDBProperties {
 		initArguments();
 		//
 		arguments[3] = "oracle_localhost_sugarcrm";
+		// Perform test
+		try {
+			Main.main(arguments);
+		}
+		catch (Exception e) {
+			fail("Exception: \n" + e);
+		}
+	}*/
+
+	@Test
+	public void testInformix() {
+		
+		initArguments();
+		//
+		arguments[3] = "informix_localhost_sugarcrm";
+		// Perform test
+		try {
+			Main.main(arguments);
+		}
+		catch (Exception e) {
+			fail("Exception: \n" + e);
+		}
+	}
+
+	@Test
+	public void testHANA() {
+		
+		initArguments();
+		//
+		arguments[3] = "hana_msas120i_sugarcrm";
 		// Perform test
 		try {
 			Main.main(arguments);
