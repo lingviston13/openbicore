@@ -228,9 +228,12 @@ public class ConnectionBean {
 	        		if (databaseDriver == null || databaseDriver.equals("")) {
 	        			// Get driver and url from property file
 	        			databaseDriver = connectionProperties.getProperty("driver");
+	        			logger.debug("databaseDriver = " + databaseDriver);
 	        			connectionURL = connectionProperties.getProperty("url");
+	        			logger.debug("connectionURL = " + connectionURL);
 	        		}
 		        	Class.forName(databaseDriver).newInstance();
+		        	logger.debug("driver loaded");
 	        		connection = DriverManager.getConnection(connectionURL, connectionProperties);
 	        	}
 	        	logger.debug("Connected to database " + connectionURL);
@@ -247,6 +250,7 @@ public class ConnectionBean {
 	
 	    	metadata = connection.getMetaData();
 	    	databaseProductName = metadata.getDatabaseProductName();
+	    	logger.debug("Product: " + databaseProductName);
 	    	//FileInputBean keyWordFile = new FileInputBean();
 	    	InputStream keyWordFile = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/SQL2003Keywords.txt");
 	    	java.util.Scanner scanner = new java.util.Scanner(keyWordFile).useDelimiter("\\A");
@@ -273,6 +277,7 @@ public class ConnectionBean {
     	}
     	catch (Exception e) {
 			logger.error(e.getMessage());
+			e.printStackTrace();
 		    throw e;
     	}
     }

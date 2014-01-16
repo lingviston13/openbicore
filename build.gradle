@@ -12,11 +12,11 @@ repositories {
 
 dependencies {
     compile group: 'commons-collections', name: 'commons-collections', version: '3.2'
-	compile fileTree(dir: 'D:/DEV/java/lib/common')
-	compile fileTree(dir: 'D:/DEV/java/lib/jdbc')
+	compile fileTree(dir: 'C:/Program Files/Java/lib/common')
+	compile fileTree(dir: 'C:/Program Files/Java/lib/jdbc')
     compile group: 'junit', name: 'junit', version: '4.+'
-	runtime fileTree(dir: 'D:/DEV/java/lib/common')
-	runtime fileTree(dir: 'D:/DEV/java/lib/jdbc')
+	runtime fileTree(dir: 'C:/Program Files/Java/lib/common')
+	runtime fileTree(dir: 'C:/Program Files/Java/lib/jdbc')
     testCompile group: 'junit', name: 'junit', version: '4.+'
 }
 
