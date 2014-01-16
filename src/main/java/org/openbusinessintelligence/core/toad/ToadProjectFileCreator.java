@@ -23,6 +23,9 @@ public class ToadProjectFileCreator {
 		projectTree = "2," + projectName;
 		projectFile.setDirectoryName(projectDirectory);
 		projectFile.setFileName(projectName + ".tpr");
+		logger.debug("Project name: " + projectName);
+		logger.debug("Project folder: " + projectDirectory);
+		logger.debug("Project name: " + projectName);
 		Writer writer = projectFile.getWriter();
 		try {
 			writer.write(projectTree + "\n");
@@ -47,6 +50,7 @@ public class ToadProjectFileCreator {
 			String[] arrPath = path.split("\\\\");
 			String name = arrPath[arrPath.length - 1];
 			if (strFilesDirs[i].isDirectory()) {
+				logger.debug("Path: " + path);
 				if (!(name.equals(".svn"))) {
 					writer.write(tabs + "3," + name + "," + path + ",FALSE,*.*\n");
 					//System.out.println(tabs + "3," + name + "," + path + ",FALSE,*.*");
