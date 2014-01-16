@@ -518,7 +518,7 @@ public class DataDictionaryBean {
                         iPk++;
                     }
                     else {
-                        targetColumnInPk[nPk] = targetColumnNames[i];
+                    	targetColumnNonInPk[nPk] = targetColumnNames[i];
                         nPk++;
                     }
                 }
