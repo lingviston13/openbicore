@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class MainTestDBProperties {
 	
-	private String[] arguments = new String[4];
+	private String[] arguments = new String[6];
 	
 	public void initArguments() {
 		
@@ -15,6 +15,8 @@ public class MainTestDBProperties {
 		arguments[1] = "dbproperties";
 		// Mandatory arguments
 		arguments[2] = "-dbconnpropertyfile";
+		// Optional arguments
+		arguments[4] = "-dbconnkeywordfile";
 		
 	}
 
@@ -99,6 +101,7 @@ public class MainTestDBProperties {
 		initArguments();
 		//
 		arguments[3] = "informix_localhost_sugarcrm";
+		arguments[5] = "";
 		// Perform test
 		try {
 			Main.main(arguments);
@@ -114,6 +117,7 @@ public class MainTestDBProperties {
 		initArguments();
 		//
 		arguments[3] = "hana_msas120i_sugarcrm";
+		arguments[5] = "HDBKeywords";
 		// Perform test
 		try {
 			Main.main(arguments);

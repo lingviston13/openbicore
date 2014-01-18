@@ -136,8 +136,13 @@
 	<!-- Query options -->
 	<option>
 		<name>dbconnpropertyfile</name>
-		<description>Connection Additional Property File</description>
-		<argName>connection additional property file</argName>
+		<description>Connection Property File</description>
+		<argName>connectionproperty file</argName>
+	</option>
+	<option>
+		<name>dbconnkeywordfile</name>
+		<description>Connection Reserver Keyword File</description>
+		<argName>connection reserver keyword file</argName>
 	</option>
 	<option>
 		<name>dbdriverclass</name>
@@ -176,6 +181,11 @@
 		<name>dbconnpropertyfile</name>
 		<description>Connection Property File</description>
 		<argName>connection property file</argName>
+	</option>
+	<option>
+		<name>dbconnkeywordfile</name>
+		<description>Connection Reserver Keywords File</description>
+		<argName>connection reserver keywords file</argName>
 	</option>
 	<option>
 		<name>dbdriverclass</name>
@@ -219,6 +229,11 @@
 		<argName>source connection property file</argName>
 	</option>
 	<option>
+		<name>srcdbconnkeywordfile</name>
+		<description>Source Connection Reserver Keyword File</description>
+		<argName>source connection reserver keywords file</argName>
+	</option>
+	<option>
 		<name>srcdbdriverclass</name>
 		<description>Source DB Driver Class</description>
 		<argName>source jdbc driver class</argName>
@@ -260,8 +275,13 @@
 	</option>
 	<option>
 		<name>trgdbconnpropertyfile</name>
-		<description>Target Connection Additional Property File</description>
-		<argName>target connection additional property file</argName>
+		<description>Target Connection Property File</description>
+		<argName>target connection property file</argName>
+	</option>
+	<option>
+		<name>trgdbconnkeywordfile</name>
+		<description>Target Connection Reserver Keyword File</description>
+		<argName>target connection reserver keyword file</argName>
 	</option>
 	<option>
 		<name>trgdbdriverclass</name>

@@ -185,6 +185,7 @@ public class Main {
 	    		// Execute a store procedure
 	    		org.openbusinessintelligence.core.db.ConnectionBean connectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
 	    		connectionBean.setPropertyFile(getOption("dbconnpropertyfile"));
+	    		connectionBean.setKeyWordFile(getOption("dbconnkeywordfile"));
 	    		connectionBean.setDatabaseDriver(getOption("dbdriverclass"));
 	    		connectionBean.setConnectionURL(getOption("dbconnectionurl"));
 	    		connectionBean.setUserName(getOption("dbusername"));
@@ -202,10 +203,11 @@ public class Main {
 				logger.info("Properties retrieved");
 	    	}
 	    	if (function.equalsIgnoreCase("tablecopy")) {
-				logger.info("Copy all tables of a schema, a single table or the result of a query from a database to another");
+				logger.info("Copy an entire schema, a single table or the result of a query from a database to another");
 				
 	    		org.openbusinessintelligence.core.db.ConnectionBean sourceConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
 	    		sourceConnectionBean.setPropertyFile(getOption("srcdbconnpropertyfile"));
+	    		sourceConnectionBean.setKeyWordFile(getOption("srcdbconnkeywordfile"));
 	    		sourceConnectionBean.setDatabaseDriver(getOption("srcdbdriverclass"));
 	    		sourceConnectionBean.setConnectionURL(getOption("srcdbconnectionurl"));
 	    		sourceConnectionBean.setUserName(getOption("srcdbusername"));
@@ -214,11 +216,11 @@ public class Main {
 	    		
 	    		org.openbusinessintelligence.core.db.ConnectionBean targetConnectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
 	    		targetConnectionBean.setPropertyFile(getOption("trgdbconnpropertyfile"));
+	    		targetConnectionBean.setKeyWordFile(getOption("trgdbconnkeywordfile"));
 	    		targetConnectionBean.setDatabaseDriver(getOption("trgdbdriverclass"));
 	    		targetConnectionBean.setConnectionURL(getOption("trgdbconnectionurl"));
 	    		targetConnectionBean.setUserName(getOption("trgdbusername"));
 	    		targetConnectionBean.setPassWord(getOption("trgdbpassword"));
-	    		targetConnectionBean.openConnection();
 	    		
 				logger.info("Source and target connections prepared");
 				
@@ -255,6 +257,8 @@ public class Main {
 				try {
 					if (Boolean.parseBoolean(getOption("trgcreate"))) {
 						logger.info("Create tables if they don't exist");
+						// Open target connection
+			    		targetConnectionBean.openConnection();
 						// Get source dictionary
 			    		org.openbusinessintelligence.core.db.DataDictionaryBean dictionaryBean = new org.openbusinessintelligence.core.db.DataDictionaryBean();
 			    		org.openbusinessintelligence.core.db.TableCreateBean tableCreate = new org.openbusinessintelligence.core.db.TableCreateBean();
@@ -278,8 +282,10 @@ public class Main {
 				    		tableCreate.setDropIfExistsOption(Boolean.parseBoolean(getOption("dropifexists")));
 				    		tableCreate.createTable();
 		    			}
+		    			targetConnectionBean.closeConnection();
 					}
-
+					// Open target connection
+		    		targetConnectionBean.openConnection();
 	    			for (int i = 0; i < targetTableList.length; i++ ) {
 			    		// Copy the content of a source sql query into a target rdbms table
 						logger.info("Feeding table: " + sourceTableList[i]);
@@ -306,8 +312,10 @@ public class Main {
 						dataCopy.executeSelect();
 						dataCopy.executeInsert();
 	    			}
-					sourceConnectionBean.closeConnection();
+	    			// Close target connection
 					targetConnectionBean.closeConnection();
+	    			// Close source connection
+					sourceConnectionBean.closeConnection();
 				}
 				catch (Exception e) {
 					logger.error("UNEXPECTED EXCEPTION");

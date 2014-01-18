@@ -131,6 +131,8 @@ public class DataCopyBean {
            	logger.info("Found column: " + columns[i - 1]);
         }
         logger.info("SQL: " + sqlText + ": got columns");
+    	rs.close();
+    	columnStmt.close();
     	return columns;
     }
 

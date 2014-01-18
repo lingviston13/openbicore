@@ -30,6 +30,7 @@ public class ConnectionBean {
     private String catalogName = "";
     private String schemaName = "";
     private String keyWords = "";
+    private String keyWordFile = "";
     private String quoteString = "";
     //
     private Connection connection = null;
@@ -72,6 +73,10 @@ public class ConnectionBean {
 
     public void setSchemaName(String property) {
         schemaName = property;
+    }
+
+    public void setKeyWordFile(String property) {
+    	keyWordFile = property;
     }
 
     // Getter methods
@@ -251,15 +256,31 @@ public class ConnectionBean {
 	    	metadata = connection.getMetaData();
 	    	databaseProductName = metadata.getDatabaseProductName();
 	    	logger.debug("Product: " + databaseProductName);
-	    	//FileInputBean keyWordFile = new FileInputBean();
-	    	InputStream keyWordFile = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/SQL2003Keywords.txt");
-	    	java.util.Scanner scanner = new java.util.Scanner(keyWordFile).useDelimiter("\\A");
-	    	keyWords = scanner.next().replace("\n", ",");
-	    	keyWordFile.close();
+	    	
+	    	InputStream keyWordStream;
+	    	java.util.Scanner scanner;
+	    	keyWords = "";
+	    	
+	    	// Get default SQL keywords
+	    	keyWordStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/SQL2003Keywords.txt");
+	    	scanner = new java.util.Scanner(keyWordStream).useDelimiter("\\A");
+	    	keyWords += scanner.next().replace("\n", ",");
 	    	scanner.close();
+	    	keyWordStream.close();
+	    	
+	    	// Get product keywords
+	    	if (keyWordFile != null && !(keyWordFile.equals(""))) {
+		    	keyWordStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("conf/" + keyWordFile + ".txt");
+		    	scanner = new java.util.Scanner(keyWordStream).useDelimiter("\\A");
+		    	keyWords += scanner.next().replace("\n", ",");
+		    	scanner.close();
+		    	keyWordStream.close();
+	    	}	    	
+	    	
 	    	keyWords += metadata.getSQLKeywords();
 	    	logger.debug("Keywords: " + keyWords);
 	    	quoteString = metadata.getIdentifierQuoteString();
+	    	logger.debug("Quote String: " + quoteString);
 	
 	    	logger.info("########################################");
 	    	logger.info("Found catalogs:");
