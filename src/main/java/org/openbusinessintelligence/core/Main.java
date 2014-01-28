@@ -182,7 +182,7 @@ public class Main {
 	    	}
 	    	if (function.equalsIgnoreCase("dbproperties")) {
 				logger.info("Get database properties");
-	    		// Execute a store procedure
+	    		// Get database properties
 	    		org.openbusinessintelligence.core.db.ConnectionBean connectionBean = new org.openbusinessintelligence.core.db.ConnectionBean();
 	    		connectionBean.setPropertyFile(getOption("dbconnpropertyfile"));
 	    		connectionBean.setKeyWordFile(getOption("dbconnkeywordfile"));
