@@ -69,7 +69,7 @@ public class Main {
 				);
 	    	}
 	    	if (function.equalsIgnoreCase("wrapperscript")) {
-	    		// Generate a TOAD project file
+	    		// Generate a Wrapper Script
 				org.openbusinessintelligence.core.script.WrapperScriptCreator wrapperScriptCreator = new org.openbusinessintelligence.core.script.WrapperScriptCreator();
 				wrapperScriptCreator.createWrapper(
 						getOption("wrapperscript"),
